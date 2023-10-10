@@ -1,100 +1,238 @@
+import numpy as np
 import matplotlib.pyplot as plt
-plt.style.use('bmh')
-plt.rcParams['font.family'] = 'Times New Roman'
 
-from matplotlib.pyplot import gca
-from numpy import array, arange
+from pathlib import Path
+from copy import deepcopy
+from typing import Callable, Literal
+
+import plot_settings
+from PeakRegion import PeakRegion
 
 
-class Spectrum:
+class Spectrum(np.ndarray):
+    """
+    Spectrum data.
+    """
+    def __new__(cls, counts: np.ndarray, *args, **kargs):
+        self = np.asarray(counts).view(cls)
+        return self
 
-    def __init__(self, counts:array, label='original', **kargs):
-        self.counts = array(counts)
-        self.label = label
-        self.attrbs = kargs
-
-    def __getattr__(self, attr):
-        return getattr(self.counts, attr)
-
-    def __getitem__(self, index):
-        return self.counts[index]
-
-    def add(self, spectrum: Spectrum):
-        self.counts += spectrum.counts
-    
-    def sub(self, spectrum):
-        self.counts -= spectrum.counts
-
-    def plot(self, *args, ax=None, plot_peaks=False, **kwargs):
-        if ax is None:
-            ax = gca()
-        ax.plot(self.counts, *args, label=self.label, **kwargs)
-
-        if plot_peaks:
-            if 'peaks' in self.attrbs.keys():
-                for start, end in self.attrbs['peaks']:
-                    ax.fill_between(arange(start, end+1), arange(start, end+1)-arange(start, end+1), self.counts[start: end+1])
-        if 'ergcal' in self.attrbs.keys():
-            ax.set_xlabel('Energy (eV)')
-            ax.set_ylabel('Counts')
+    def __array_finalize__(self, obj):
+        if obj is None:
+            return
+        self._label = getattr(obj, 'label', None)
+        self._peaks = getattr(obj, 'peaks', None)
+        if (attrs := getattr(obj, 'attrs', None)) is not None:
+            self._attrs = deepcopy(attrs)
         else:
-            ax.set_xlabel('Channel')
-            ax.set_ylabel('Counts')
-        ax.set_xlim(0, )
-        ax.set_ylim(0, )
-        ax.legend()
-        return ax
+            self._attrs = None
+
+    def __init__(self, counts: list | np.ndarray, label: str = None, attrs: dict = None):
+        if label is None:
+            label = 'Spectrum'
+        self._label = label
+
+        if attrs is None:
+            attrs = {}
+        self._attrs = attrs
+
+    def __array_wrap__(self, out_arr, context=None):
+        if out_arr.ndim == 0:
+            return out_arr.item()
+        else:
+            return np.ndarray.__array_wrap__(self, out_arr, context)
+
+    def __repr__(self):
+        return f"Spectrum[{self.label}]\n \
+|Shape: {self.shape}\n \
+|Head:  {list(self[:min(5, len(self))])}\n \
+|Attrs: {self.attrs.keys()}\n"
+
+    def __str__(self):
+        return f"Spectrum[{self.label}]"
+
+    @property
+    def label(self):
+        return self._label
+
+    @label.setter
+    def label(self, value):
+        self._label = value
+
+    @property
+    def indexes(self):
+        return np.arange(len(self))
+
+    @property
+    def attrs(self):
+        return self._attrs
+
+    @attrs.setter
+    def attrs(self, value):
+        self._attrs = value
+
+    @property
+    def counts(self):
+        return np.asarray(self)
+
+    @property
+    def length(self):
+        return self.shape[0]
+
+    @property
+    def peaks(self):
+        return self._peaks
+
+    @peaks.setter
+    def peaks(self, peaks: list[PeakRegion]):
+        self._peaks = peaks
 
     def copy(self):
-        return Spectrum(self.counts, self.label, **self.attrbs)
+        return deepcopy(self)
 
+    def area_estimate(self, peak: PeakRegion) -> tuple:
+        """
+        Estimate peak area of spectrum
+        """
+        total = sum(self[peak.indexes])
+        baseline = (self[peak.left] + self[peak.right]) * peak.length / 2
+        return total, baseline
 
-if __name__ == '__main__':
+    def plot(self, *args, axes: plt.Axes = None, **kargs) -> plt.Axes:
+        """
+        Plot the spectrum.
+        """
+        if axes is None:
+            axes = plt.gca()
+        if 'label' not in kargs:
+            kargs['label'] = self.label
+        axes.plot(self, *args, **kargs)
+        axes.set_ylim(0, )
+        axes.set_xlim(0, )
+        return axes
 
-    import numpy as np
-    import unittest
+    def plot_peaks(self, *args, axes: plt.Axes = None, **kargs) -> plt.Axes:
+        if not hasattr(self, 'peaks'):
+            raise ValueError(f"{self} does not have peaks.")
+        if axes is None:
+            axes = plt.gca()
+        for i, peak in enumerate(self.peaks):
+            axes.plot(peak.indexes, self[peak.indexes], *args, **kargs, marker=plot_settings.markers(i))
+    
+    # def plot_fitted_peaks(self, *args, axes: plt.Axes = None, **kargs) -> plt.Axes:
+    #     if not hasattr(self, 'peaks'):
+    #         raise ValueError(f"{self} does not have peaks.")
+    #     if axes is None:
+    #         axes = plt.gca()
+    #     for i, peak in enumerate(self.peaks):
+    #         if np.any([not hasattr(peak, attr) for attr in ['params', 'shapes', 'heights', 'fcounts']]):
+    #             continue
+    #         axes.plot(peak.indexes, peak.fcounts, *args, **kargs, marker=plot_settings.markers)
+    #         axes.fill_between()
 
-    class TestSpectrum(unittest.TestCase):
-
-        def setUp(self):
-            self.spectrum = Spectrum(np.arange(20), 'test', peaks=[(5, 10)])
-
-        # 测试取值和切片取值
-        def test_getitem(self):
-            self.assertEqual(self.spectrum[0], 0)
-            self.assertEqual(self.spectrum[: 5].shape[0], 5)
-
-        # 测试属性和方法
-        def test_attr(self):
-            self.assertEqual(self.spectrum.label, 'test')
-            self.assertEqual(self.spectrum.attrbs['peaks'], [(5, 10)])
-            self.assertEqual(self.spectrum.mean(), 9.5)
-            self.assertEqual(self.spectrum.sum(), 190)
-
-        # 测试调用画图和其他参数
-        def test_call(self):
-            ax = self.spectrum.plot()
-            self.assertEqual(ax.get_xlabel(), 'Channel')
-            self.assertEqual(ax.get_ylabel(), 'Counts')
-
-        # 测试复制
-        def test_copy(self):
-            spectrum_copy = self.spectrum.copy()
-            self.assertEqual(spectrum_copy[0], 0)
-            self.assertEqual(spectrum_copy.label, 'test')
-            self.assertEqual(spectrum_copy.attrbs['peaks'], [(5, 10)])
-
-        # 测试深拷贝
-        def test_copy_change(self):
-            spectrum_copy = self.spectrum.copy()
-            spectrum_copy.counts[0] = 1
-            self.assertEqual(self.spectrum[0], 0)
-            spectrum_copy.label = 'test2'
-            self.assertEqual(self.spectrum.label, 'test')
+    @classmethod
+    def from_GammaVision(cls, filename: str):
+        if Path(filename).suffix.lower() not in ['.spe', '.chn']:
+            raise ValueError(f"{filename} is not a valid GammaVision file.")
+        with open(filename, 'r') as fopen:
+            filelines = fopen.readlines()
+        data_index = next((i for i, line in enumerate(filelines) if line.startswith('$DATA')), None)
+        index = data_index + 2
+        counts = []
+        while filelines[index].strip().isdigit():
+            counts.append(int(filelines[index].strip()))
+            index += 1
+        self = cls(counts)
+        return self
         
-        # 其他测试
-        def test_others(self):
-            spectrum2 = Spectrum(np.ones(20), 'test2')
-            # self.assertEqual(self.spectrum - spectrum2, np.arange(20) - np.ones(20))
 
-    unittest.main()
+class SimulatedSpectrum(Spectrum):
+    """
+    Simulated Spectrum Generator for algorithm test.
+    """
+    def __new__(cls, length: int = 200, *args, **kargs):
+        counts = np.zeros(length)
+        self = super().__new__(cls, counts)
+        return self
+
+    def __init__(self,
+                 length: int = 200,
+                 peaks_info: list = [[30, 2.5, 4000], [70, 3, 2000], [110, 4, 1000],  [150, 4.5, 2400], [165, 4.3, 1600]],
+                 base_intensity: int = 100,
+                 base_amplitude: int = 100,
+                 base_function: Callable = lambda x: x,
+                 label: str = None):
+
+        self.peaks_info = peaks_info
+        self.base_intensity = base_intensity
+        self.base_amplitude = base_amplitude
+        self.base_function = base_function
+
+        peaks = []
+        for peak_info in peaks_info:
+            peaks.append(PeakRegion(int(peak_info[0]-peak_info[1]*3), int(peak_info[0]+peak_info[1]*3)))
+
+        self.baseline = self._gen_base()
+        self.peakform = self._gen_peaks()
+        self[:] = self.baseline[:] + self.peakform[:]
+        super().__init__(self.baseline + self.peakform, label)
+
+    def _gen_base(self):
+        base = self.base_function(np.linspace(0, 1, self.length))
+        base = (base - base.min()) / (base.ptp() + 1E-3)
+        base = base * self.base_amplitude + self.base_intensity
+        base = np.random.normal(loc=base, scale=base**0.5, size=(self.length,))
+        return base
+
+    def _gen_peaks(self):
+        peak = np.zeros((self.length,))
+        for peak_info in self.peaks_info:
+            peak += self._gen_peak(*peak_info)
+        return peak
+
+    def _gen_peak(self, centroid, stderror, area):
+        channels = np.arange(0, self.length)
+        amplitude = area / stderror / (2*np.pi)**0.5
+        return amplitude * np.exp(- (channels-centroid)**2 / stderror**2 / 2)
+
+
+simuspecs = {
+    'simple': SimulatedSpectrum(base_intensity=100, base_amplitude=100, base_function=lambda x:  x**0 + 1,
+                                    peaks_info=[[95, 6, 4000]]),
+    'doublepeak_slight': SimulatedSpectrum(base_intensity=100, base_amplitude=100, base_function=lambda x:  x,
+                                    peaks_info=[[70, 6, 4000], [105, 7, 3000]]),
+    'doublepeak_normal_narrow': SimulatedSpectrum(base_intensity=100, base_amplitude=1000, base_function=lambda x:  1 / (x + 0.1),
+                                    peaks_info=[[90, 3, 4000], [100, 2.5, 3000]]),
+    'doublepeak_normal': SimulatedSpectrum(base_intensity=100, base_amplitude=100, base_function=lambda x:  1 / (x + 1),
+                                    peaks_info=[[70, 6, 4000], [100, 10, 3000]]),
+    'doublepeak_severe': SimulatedSpectrum(base_intensity=200, base_amplitude=100, base_function=lambda x:  np.abs((x-0.4)),
+                                    peaks_info=[[70, 7, 4000], [90, 10, 3000]]),
+    'synthesized': SimulatedSpectrum(base_intensity=100, base_amplitude=100, base_function=lambda x:  x,
+                                    peaks_info=[[30, 2.5, 4000], [70, 3, 2000], [110, 4, 1000],  [150, 4.5, 2400], [165, 4.3, 1600]])
+}
+
+
+if __name__ == "__main__":
+
+    # Initilization
+    spec = Spectrum(np.arange(1, 8), label="test", attrs={"a": 1, "b": 2})
+
+    # Check behavior
+    print(f"1. Print length = {len(spec)}")
+    print(f"2. Slice like a array: spec[1:3] = {spec[1:3]}, spec[1:] = {spec[1:]}, spec[1:3:2] = {spec[1:3:2]}")
+    print(f"3. Calculate like a array: spec+1 = {(spec+1)}, spec+spec = {(spec+spec)}, sum(spec) = {sum(spec)}")
+
+    # test spectrum modification
+    spec = Spectrum(np.zeros(10))
+    print(id(spec), spec.sum(), spec.counts)
+    spec[:5] = 1
+    print(id(spec), spec.sum(), spec.counts)
+    spec[5:] = 2
+    print(id(spec), spec.sum(), spec.counts)
+    spec[:] = np.arange(10)
+    print(id(spec), spec.sum(), spec.counts)
+
+    # test spectrum
+    simu = SimulatedSpectrum()
+    simu.plot()
+    plt.savefig("fig.jpg")

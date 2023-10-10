@@ -1,5 +1,6 @@
 import numpy as np
 
+from typing import Literal
 from numpy.fft import fft, ifft
 from pywt import wavedec, waverec
 
@@ -9,18 +10,27 @@ from Spectrum import Spectrum
 
 class CentroidSmoother(Operator):
 
-    def __init__(self, order):
+    def __init__(self, order: int = 2, label: str = None):
+        '''
+        The most basic smoother.
+
+        :param order: smoothing order, also the half-width of smoothing window
+        :label: label for the operator
+        '''
         self._order = order
-        self._coefs = self._gencoefs()
-        self._label = f'-CentroidSmoother[O{self._order}]'
+        self._coefs = self._gen_coefs()
 
-    def __run__(self, spectrum):
-        smthed = spectrum.copy()
-        smthed.counts = np.convolve(spectrum.counts, self._coefs, 'same')
-        smthed.label += self._label
-        return smthed
+        if label is None:
+            label = f'CentroidSmoother[O{self._order}]'
+        super().__init__(1, label)
 
-    def _gencoefs(self):
+    def __run__(self, spectra: Spectrum | list[Spectrum], *args, **kargs) -> Spectrum:
+        smoothed = spectra[0].copy()
+        padded = np.pad(spectra[0].data, (self._order, self._order), mode='reflect')
+        smoothed[:] = np.convolve(padded, self._coefs, mode='same')[self._order: -self._order]
+        return smoothed
+
+    def _gen_coefs(self) -> np.ndarray:
         def coefs(order):
             if order == 0:
                 return np.array([1])
@@ -38,102 +48,130 @@ class CentroidSmoother(Operator):
 
 class SavitzkySmoother(Operator):
 
-    def __init__(self, order, hwidth):
+    def __init__(self, order: int = 2, hwidth: int = 3, label: str = None):
+        '''
+        The most widely used smoother, applied in commercial codes, such as GammaVision & Genie2000
+        Reference:
+            A. Savitzky and M. J. E. Golay, “Smoothing and Differentiation
+            of Data by Simplified Least Squares Procedures.” Anal. Chem.,
+            vol. 36, no. 8, pp. 1627–1639, Jul. 1964. [Online]. Available:
+            http://dx.doi.org/10.1021/ac60214a047
+
+        :param order: order of fitted polynomial
+        :param hwidth: half width of smoothing window
+        :param label: label for the operator
+        '''
         self._order = order
         self._hwidth = hwidth
-        self._coefs = self._gencoefs()
-        self._label = f'-SavitkySmoother[O{self._order}|HW{self._hwidth}]'
+        self._coefs = self._gen_coefs()
+        if label is None:
+            label = f'SavitzkySmoother[O{self._order}]'
+        super().__init__(1, label)
 
-    def __run__(self, spectrum):
-        smthed = spectrum.copy()
-        smthed.counts = np.convolve(spectrum.counts, self._coefs, 'same')
-        smthed.label += self._label
-        return smthed
+    def __run__(self, spectra: Spectrum | list[Spectrum], *args, **kargs) -> Spectrum:
+        smoothed = spectra[0].copy()
+        padded = np.pad(spectra[0].data, (self._hwidth, self._hwidth), mode='reflect')
+        smoothed[:] = np.convolve(padded, self._coefs, mode='same')[self._hwidth: -self._hwidth]
+        return smoothed
 
-    def _gencoefs(self):
+    def _gen_coefs(self) -> np.ndarray:
         mat_order, mat_width = np.meshgrid(np.arange(self._order+1),
                                            np.arange(-self._hwidth,
                                                      self._hwidth+1))
-        A = mat_width ** mat_order
-        M = np.matmul(np.linalg.inv(np.matmul(A.T, A)), A.T)
-        return M[0, :]
+        mat_A = mat_width ** mat_order
+        mat_M = np.matmul(np.linalg.inv(np.matmul(mat_A.T, mat_A)), mat_A.T)
+        return mat_M[0, :]
 
 
 class FourierSmoother(Operator):
 
-    def __init__(self, mode, threshold):
+    def __init__(self, mode: Literal["low", "high", "gauss"] = "low", threshold: float = 0.6, label: str = None):
+        '''
+        Smoother based on Fourier Transformation.
+        Reference:
+
+
+        :param order: order of fitted polynomial
+        :param hwidth: half width of smoothing window
+        :param label: label for the operator
+        '''
         self._mode = mode
         self._threshold = threshold
-        self._label = f'-FourierSmoother[{self._mode}|T{self._threshold:.2f}]'
 
-    def __run__(self, spectrum):
-        smthed = spectrum.copy()
-        trsfed = fft(spectrum)
-        trsfed = self._denoise(trsfed)
-        smthed.counts = np.real(ifft(trsfed))
-        smthed.label += self._label
-        return smthed
+        if label is None:
+            label = f'FourierSmoother[{self._mode}]'
+        super().__init__(1, label)
 
-    def _denoise(self, trsfed):
+    def __run__(self, spectra: Spectrum | list[Spectrum], *args, **kargs) -> Spectrum:
+        smoothed = spectra[0].copy()
+        transformed = fft(spectra[0])
+        transformed = self._denoise(transformed)
+        smoothed[:] = np.real(ifft(transformed))
+        return smoothed
+
+    def _denoise(self, transformed: np.ndarray):
         if self._mode == 'low':
-            dnsed = trsfed.copy()
-            dnsed[int(self._threshold*trsfed.shape[0]):
-                  int((1-self._threshold)*trsfed.shape[0])] = 0
-        return dnsed
+            denoised = transformed.copy()
+            denoised[int(self._threshold*transformed.shape[0]):
+                  int((1-self._threshold)*transformed.shape[0])] = 0
+        return denoised
 
 
 class WaveletSmoother(Operator):
-    def __init__(self, wavelet, mode, order):
+    def __init__(self, wavelet: Literal[""], mode: Literal[""], order: int = 3):
         self._wavelet = wavelet
         self._mode = mode
         self._order = order
-        self._label = f'-WaveletSmoother[O{self._order}]'
+        if label is None:
+            label = f'WaveletSmoother[O{self._order}]'
+        super().__init__(1, label)
 
-    def __run__(self, spectrum):
-        smthed = spectrum.copy()
-        trsfed = wavedec(spectrum, wavelet=self._wavelet, level=self._order)
-        trsfed = self._denoise(trsfed)
-        smthed.counts = np.real(waverec(trsfed, wavelet=self._wavelet))
-        smthed.label += self._label
-        return smthed
+    def __run__(self, spectra: Spectrum | list[Spectrum], *args, **kargs) -> Spectrum:
+        smoothed = spectra[0].copy()
+        transformed = wavedec(spectra[0], wavelet=self._wavelet, level=self._order)
+        transformed = self._denoise(transformed)
+        smoothed[:] = np.real(waverec(transformed, wavelet=self._wavelet))
+        return smoothed
 
-    def _denoise(self, trsfed):
-        sigma = np.median(np.abs(trsfed[-1]))
-        dnsed = trsfed.copy()
+    def _denoise(self, transformed: np.ndarray) -> np.ndarray:
+        sigma = np.median(np.abs(transformed[-1]))
+        denoised = transformed.copy()
         if self._mode == 'soft':
-            thershold = sigma * np.sqrt(2 * np.log(len(trsfed)))
-            for item in dnsed[-2:]:
+            thershold = sigma * np.sqrt(2 * np.log(transformed.shape[0]))
+            for item in denoised[-2:]:
                 item[abs(item) < thershold] = 0
                 item[item > thershold] -= thershold
                 item[item < -thershold] += thershold
-        return dnsed
+        return denoised
 
 
 class TranslationInvarianceWaveletSmoother(WaveletSmoother):
 
-    def __init__(self, wavelet, mode, order, step=1):
-        super().__init__(wavelet, mode, order)
+    def __init__(self, wavelet: Literal[""], mode: Literal[""], step: int = 1, order: int = 3):
+        
         self._step = step
-        self._label = f'-TIWaveletSmoother[O{self._order}]'
+        if label is None:
+            label = f'TIWaveletSmoother[O{self._order}]'
+        super().__init__(wavelet, mode, order)
 
-    def __run__(self, spectrum):
-        smthed = spectrum.copy()
+    def __run__(self, spectra: Spectrum | list[Spectrum], *args, **kargs) -> Spectrum:
+        smoothed = spectra[0].copy()
         self._wavelet_smoother = WaveletSmoother(self._wavelet, self._mode, self._order)
-        trsfed_sum = np.zeros(spectrum.shape)
-        times = spectrum.counts.shape[0] // self._step
+        transformed_sum = np.zeros(spectrum.shape)
+        times = spectra[0].shape[0] // self._step
         for i in range(times):
-            trslted = Spectrum(np.roll(spectrum.counts, self._step*i))
-            trsfed = self._wavelet_smoother(trslted)
-            trsfed_sum += np.roll(trsfed.counts, -self._step*i)
-        smthed.counts = trsfed_sum / times
-        smthed.label += self._label
-        return smthed
+            translated = Spectrum(np.roll(spectrum, self._step * i))
+            transformed = self._wavelet_smoother(translated)
+            transformed_sum += np.roll(transformed, -self._step * i)
+        smoothed[:] = transformed_sum / times
+        smoothed.label += self._label
+        return smoothed
 
 
 if __name__ == "__main__":
 
     import matplotlib.pyplot as plt
-    from SimulatedSpectrum import SimulatedSpectrum
+    from Spectrum import SimulatedSpectrum
 
     spectrum = SimulatedSpectrum()
 

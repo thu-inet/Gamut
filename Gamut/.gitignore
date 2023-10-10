@@ -1,0 +1,12 @@
+*.png
+*.jpg
+*.mmd
+
+*.chn
+*.spe
+
+.vscode/
+__pycache__/
+.idea/
+
+.gitignore

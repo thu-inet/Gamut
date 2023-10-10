@@ -1,17 +1,21 @@
 from Operator import Operator
-from SimulatedSpectrum import SimulatedSpectrum
+from Spectrum import Spectrum
 import numpy as np
-from abc import abstractmethod
 from utils import Differential, peak_fit
+from PeakRegion import PeakRegion
+from typing import Literal
+
 
 class PeakSearcher(Operator):
 
-    @abstractmethod
-    def __init__(self):
-        pass
+    def __init__(self, label: str = None):
+        super().__init__(1, label)
 
-    def _split(self, data):
-        slices = []
+    def _split(self, data: np.ndarray) -> list[PeakRegion]:
+        """
+        Split a bool sequence into pieces of consecutive True.
+        """
+        peaks = []
         start = None
         for i, d in enumerate(data):
             if d:
@@ -19,21 +23,26 @@ class PeakSearcher(Operator):
                     start = i
             else:
                 if start is not None:
-                    slices.append((start, i-1))
+                    peaks.append(PeakRegion(start, i-1))
                     start = None
         if start is not None:
-            slices.append((start, i))
-        return slices
+            peaks.append(PeakRegion(start, i-1))
+        return peaks
 
-    def _remove(self, peaks, threshold):
-        return [(start, end) for start, end in peaks if end - start > threshold]
-
-    def _correct(self, peaks, shift, spectrum):
+    def _remove(self, peaks: list[PeakRegion], threshold: int):
         peaks_copy = []
-        for start, end in peaks:
-            start = max(start+shift, 0)
-            end = min(end + shift, spectrum.shape[0] - 1)
-            peaks_copy.append((start, end))
+        for peak in peaks:
+            if peak.length >= threshold:
+                peaks_copy.append(peak)
+        return peaks_copy
+
+    def _correct(self, peaks: list[PeakRegion], shift: int, spectrum: Spectrum):
+        peaks_copy = []
+        for peak in peaks:
+            peak_copy = peak.copy()
+            peak_copy.left = max(peak.left+shift, 0)
+            peak_copy.right = min(peak.right + shift, spectrum.shape[0] - 1)
+            peaks_copy.append(peak_copy)
         return peaks_copy
 
 
@@ -43,84 +52,91 @@ class GaussPeakSearcher(PeakSearcher):
     if odd o, o = (o-1)/2 g(i) = c(i+o+1) * c(i-o) / c(i+o+3) / c(i-o-2)
 
     '''
-    def __init__(self, order, threshold):
+    def __init__(self, order: int, threshold: float, label: str = None):
         self._order = order
         self._threshold = threshold
-        self._label = f'-GaussPeakSearcher[O{self._order}]'
+        if label is None:
+            label = f'GaussPeakSearcher[O{self._order}]'
+        super().__init__(label)
 
-    def __run__(self, spectrum):
-        searched = spectrum.copy()
-        gauss = spectrum[2: -self._order] * spectrum[self._order: -2] \
-            / spectrum[0: -self._order-2] / spectrum[self._order+2: ]
-        ratio = (gauss - 1) * spectrum[2: -self._order]**0.5
-        ratio = np.pad(ratio, (2, self._order), mode='edge')
-        peaks = self._split(ratio > self._threshold)
-        peaks = self._remove(peaks, 4)
-        peaks = self._correct(peaks, int(self._order/2-1), spectrum)
-        searched.attrbs['peaks'] = peaks
-        searched.label += self._label
+    def __run__(self, spectra: Spectrum | list[Spectrum], *args, **kargs) -> Spectrum:
+        searched = spectra[0].copy()
+        padded = self._transform(searched)
+        peaks = self._split(padded > self._threshold)
+        peaks = self._remove(peaks, 6)
+        peaks = self._correct(peaks, round(self._order/2-1), searched)
+        searched.peaks = peaks
         return searched
+
+    def _transform(self, searched: Spectrum) -> Spectrum:
+        padded = np.pad(searched, (2, self._order), mode='mean')
+        gaussed = padded[2: -self._order] * padded[self._order: -2] / padded[0: -self._order-2] / padded[self._order+2: ]
+        rectified = (gaussed - 1) * searched ** 0.5
+        return Spectrum(rectified)
 
 
 class DifferentialPeakSearcher(PeakSearcher):
 
-    def __init__(self, poly_order, hwidth, derive_order):
+    def __init__(self, poly_order: int, hwidth: int, derive_order: int, zero_width: int = 4, sigma: float = 0.7, label: str = None):
         self._poly_order = poly_order
         self._hwidth = hwidth
         self._derive_order = derive_order
-        self._label = f'-DifferentialPeakSearcher[O{self._poly_order}]'
+        self._zero_width = zero_width
+        self._sigma = sigma
+        if label is None:
+            label = f'DifferentialPeakSearcher[O{self._poly_order}]'
+        super().__init__(label)
 
-    def __run__(self, spectrum):
-        searched = spectrum.copy()
-        diff, _ = Differential(spectrum, self._poly_order, self._hwidth, self._derive_order)
-        # return diff, diff[9:] * diff[:-9] < 0
-        peaks = self._split(diff[9:] * diff[:-9] < 0)
-        peaks = self._remove(peaks, 4)
-        peaks = self._correct(peaks, 5, spectrum)
-        searched.attrbs['peaks'] = peaks
-        searched.label += self._label
-        print(peaks)
+    def __run__(self, spectra: Spectrum | list[Spectrum], *args, **kargs) -> Spectrum:
+        searched = spectra[0].copy()
+        differentiated = self._transform(searched)
+        zeros = np.zeros(differentiated.shape, dtype=bool)
+        for i in range(self._zero_width, differentiated.shape[0]-self._zero_width):
+            zeros[i] = np.all(differentiated[i-self._zero_width: i] > 0) and np.all(differentiated[i: i+self._zero_width] < 0)
+        peaks = self._split(zeros)
+
+        for peak in peaks:
+            peak_hwidth = 1
+            peak.left = max(0, peak.left - 2)
+            peak.right = min(searched.shape[0] - 1, peak.right + 2)
+            while True:
+                peak.left = max(0, peak.left - 1)
+                peak.right = min(searched.shape[0] - 1, peak.right + 1)
+                total, baseline = searched.area_estimate(peak)
+                if (total - baseline) / total  > self._sigma or ((total - baseline) / (total * peak_hwidth) ** 0.5  < 0.2):
+                    break
+                peak_hwidth += 1
+
+        peaks = self._remove(peaks, 3)
+        searched.peaks = peaks
         return searched
 
-
-class PeakIdentifier(Operator):
-
-    def __init__(self):
-        pass
-
-    def __run__(self, spectrum):
-        identified = spectrum.copy()
-        new_peaks = []
-        for start, end in spectrum.attrbs['peaks']:
-            windowed = spectrum[start: end+1]
-            amplitude, centroid, stderr = peak_fit(windowed, 1)
-            print(start, end, start+centroid, stderr)
-            stderr = abs(stderr)
-            if stderr < 6:
-                new_peaks.append((max(int(start+centroid-3*stderr), 0), min(int(start+centroid+3*stderr), len(spectrum.counts)-1)))
-        identified.attrbs['peaks'] = new_peaks
-        print(new_peaks)
-        return identified
+    def _transform(self, searched: Spectrum) -> np.ndarray:
+        padded = np.pad(searched, (self._hwidth, self._hwidth), mode='edge')
+        differentiated, _ = Differential(padded, self._poly_order, self._hwidth, self._derive_order)
+        sliced = differentiated[self._hwidth: -self._hwidth]
+        return Spectrum(sliced)
 
 
 class CovarianceSearcher(PeakSearcher):
-    
-    def __init__(self, hwidth, FWHM, mode):
+
+    def __init__(self, hwidth: int, FWHM: int, mode: Literal["uniform", "inverse", "normal"] = "inverse", label: str = None):
         self._hwidth = hwidth
         self._FWHM = FWHM
         self._mode = mode
-        self._label = f'-CovarianceSearcher[{self._mode}]'
-    
-    def __run__(self, spectrum):
-        searched = spectrum.copy()
-        cov = self._covariance(spectrum)
-        peaks = self._split(cov > 0)
+        if label is None:
+            label = f'CovarianceSearcher[F{self._FWHM}]'
+        super().__init__(label)
+
+    def __run__(self, spectra: Spectrum | list[Spectrum], *args, **kargs) -> Spectrum:
+        searched = spectra[0].copy()
+        covariance = self._covariance(searched)
+        peaks = self._split(covariance > 0)
         peaks = self._remove(peaks, 2)
-        searched.attrbs['peaks'] = peaks
-        searched.label += self._label
+        searched.peaks = peaks
         return searched
 
-    def _covariance(self, spectrum):
+    def _covariance(self, spectrum: Spectrum) -> Spectrum:
 
         covariances = np.zeros(spectrum.counts.shape)
         for i in range(self._hwidth, spectrum.counts.shape[0]-self._hwidth):
@@ -140,8 +156,7 @@ class CovarianceSearcher(PeakSearcher):
 
             covariance = sum(weight)*sum(weight*shape*windowed_spectrum)-sum(weight*windowed_spectrum)*sum(weight*shape)
             covariances[i] = covariance
-
-        return covariances / variance / bias
+        return Spectrum(covariances / variance / bias)
 
 
 if __name__ == '__main__':
@@ -150,53 +165,32 @@ if __name__ == '__main__':
     import Smoother
     import Operator
     import OtherOperator
+    import BasicOperator
+    from Spectrum import simuspecs
 
-    spe = SimulatedSpectrum()
-    cen = Smoother.CentroidSmoother(2)
-    strp = OtherOperator.SNIPstripper(5)
-    diff = DifferentialPeakSearcher(3, 2, 1)
-    gauss = GaussPeakSearcher(2, 0.1)
-    cov = CovarianceSearcher(2, 3, 'gauss')
-    ide = PeakIdentifier()
+    simu = simuspecs['doublepeak_slight']
 
-    spe = cen(spe)
-    spe2 = spe.copy()
-    spe = strp(spe)
-    
-    gaussspe = gauss(spe)
-    diffspe = diff(spe)
-    covspe = cov(spe)
+    cen = Smoother.CentroidSmoother(3)
+    strp = OtherOperator.SNIPStripper(10)
+    minus = BasicOperator.Stripper()
 
-    idegauss = ide(gaussspe)
-    idediff = ide(diffspe)
-    idecov = ide(covspe)
-    idediff.counts = spe2.counts
-    idegauss.counts = spe2.counts
-    idecov.counts = spe2.counts
+    diff = DifferentialPeakSearcher(4, 3, 1, 2, 0.4)
+    gauss = GaussPeakSearcher(2, 0.05)
+    cov = CovarianceSearcher(2, 3)
 
+    smoothed = cen(cen(simu))
+    base = strp(cen(cen(simu)))
+    stripped = minus([cen(cen(simu)), base])
+
+    gaussspe = gauss(stripped)
+    diffspe = diff(stripped)
+    covspe = cov(stripped)
 
     fig, axe = plt.subplots(3, 1)
-    # diffspe.plot(plot_peaks=True, ax=axe[0])
-    # idespe.plot(plot_peaks=True, ax=axe[1])
-    idegauss.plot(plot_peaks=True, ax=axe[0])
-    idediff.plot(plot_peaks=True, ax=axe[1])
-    idecov.plot(plot_peaks=True, ax=axe[2])
-    plt.show()
+    for i, spe in enumerate([gaussspe, diffspe, covspe]):
+        spe.plot(axes=axe[i])
+        spe.plot_peaks(axes=axe[i])
+        print(spe)
+    fig.savefig("compare.png")
 
-
-    # gauss = GaussPeakSearcher(2, 0.1)
-    # extend = BasicOperator.Extender(10)
-    # slicer = BasicOperator.Slicer(10, -10)
-
-    # pipe = Operator.OperatorPipe(cen, )
-    # spe2 = pipe(spe)
-
-    # spe3 = gauss(spe)
-
-    # fig, axes = plt.subplots(3, 1, sharex=True)
-    # spe.plot('.', ax=axes[0])
-    # spe2.plot('.', ax=axes[1], plot_peaks=True)
-    # ax = spe3.plot('.', ax=axes[2], plot_peaks=True)
-    # # ax.twinx().plot(ratio, '.', label='ratio', color='red')
-    # plt.show()
 

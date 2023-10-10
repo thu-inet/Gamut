@@ -1,0 +1,5 @@
+graph TD
+0["Node[ 0]"] -- "[0]>>linear>>[0]" --> 1["Node[ 1]"]
+0["Node[ 0]"] -- "[0]>>modulo>>[0]" --> 2["Node[ 2]"]
+0["Node[ 0]"] -- "[0]>>linear>>modulo>>[1]" --> 2["Node[ 2]"]
+2["Node[ 2]"] -- "[0, 1]>>Multiplier>>[0]" --> 3["Node[ 3]"]
