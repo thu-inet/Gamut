@@ -1,6 +1,6 @@
-from Operator import Operator
 import numpy as np
-from Spectrum import Spectrum
+from .Spectrum import Spectrum
+from .Operator import Operator
 
 
 class SNIPStripper(Operator):

@@ -1,11 +1,10 @@
-from abc import ABC, abstractmethod
-
 import matplotlib.pyplot as plt
 import numpy as np
 
-from Spectrum import Spectrum
-
 from typing import Union, Callable
+from abc import ABC, abstractmethod
+
+from .Spectrum import Spectrum
 
 
 class Operator(ABC):

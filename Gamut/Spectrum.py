@@ -1,12 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import xml.etree.ElementTree as ET
 
 from pathlib import Path
 from copy import deepcopy
-from typing import Callable, Literal
+from typing import Callable
+from xml.dom.minidom import parse as parse_xml
 
-import plot_settings
-from PeakRegion import PeakRegion
+from .plot_settings import markers
+from .PeakRegion import Region, Calibration
 
 
 class Spectrum(np.ndarray):
@@ -22,6 +24,7 @@ class Spectrum(np.ndarray):
             return
         self._label = getattr(obj, 'label', None)
         self._peaks = getattr(obj, 'peaks', None)
+        self.ergcal = getattr(obj, 'ergcal', None)
         if (attrs := getattr(obj, 'attrs', None)) is not None:
             self._attrs = deepcopy(attrs)
         else:
@@ -84,13 +87,13 @@ class Spectrum(np.ndarray):
         return self._peaks
 
     @peaks.setter
-    def peaks(self, peaks: list[PeakRegion]):
+    def peaks(self, peaks: list[Region]):
         self._peaks = peaks
 
     def copy(self):
         return deepcopy(self)
 
-    def area_estimate(self, peak: PeakRegion) -> tuple:
+    def area_estimate(self, peak: Region) -> tuple:
         """
         Estimate peak area of spectrum
         """
@@ -106,9 +109,13 @@ class Spectrum(np.ndarray):
             axes = plt.gca()
         if 'label' not in kargs:
             kargs['label'] = self.label
-        axes.plot(self, *args, **kargs)
+        if hasattr(self, 'ergcal'):
+            axes.plot(self.ergcal(self.indexes), self, *args, **kargs)
+        else:
+            axes.plot(self, *args, **kargs)
         axes.set_ylim(0, )
         axes.set_xlim(0, )
+
         return axes
 
     def plot_peaks(self, *args, axes: plt.Axes = None, **kargs) -> plt.Axes:
@@ -116,9 +123,55 @@ class Spectrum(np.ndarray):
             raise ValueError(f"{self} does not have peaks.")
         if axes is None:
             axes = plt.gca()
-        for i, peak in enumerate(self.peaks):
-            axes.plot(peak.indexes, self[peak.indexes], *args, **kargs, marker=plot_settings.markers(i))
+        if hasattr(self, 'ergcal'):
+            for i, peak in enumerate(self.peaks):
+                axes.plot(self.ergcal(peak.indexes), self[peak.indexes], *args, **kargs, marker=markers(i))
+        else:
+            for i, peak in enumerate(self.peaks):
+                axes.plot(peak.indexes, self[peak.indexes], *args, **kargs, marker=markers(i))
+
+    def export_to_xml(self, filepath: str | Path):
+        """
+        Export the report to a xml file.
+        """
+        spec = ET.Element('spectrum')
+        spec.attrib['name'] = self.label.replace('>', r'\>')
+        spec.attrib['length'] = str(self.length)
+
+        if hasattr(self, 'peaks'):
+            peaks = ET.SubElement(spec, 'peaks')
+            for peak in self.peaks:
+                peak_el = ET.SubElement(peaks, 'peak')
+                peak_el.attrib['left'] = str(peak.indexes[0])
+                peak_el.attrib['right'] = str(peak.indexes[-1])
+                
+                if hasattr(self, 'ergcal'):
+                    erg_el = ET.SubElement(peak_el, 'erg')
+                    erg_el.attrib['left'] = f"{self.ergcal(peak.indexes[0]):.2f}"
+                    erg_el.attrib['right'] = f"{self.ergcal(peak.indexes[-1]):.2f}"
     
+                fit_el = ET.SubElement(peak_el, 'fit')
+                fit_el.attrib['amplitude'] = f"{peak.fit_results[2][0]:.2f}"
+                fit_el.attrib['centroid'] = f"{peak.fit_results[0][0]:.2f}"
+                fit_el.attrib['stderror'] = f"{peak.fit_results[0][1]:.2f}"
+                fit_el.attrib['centroid_erg'] = f"{self.ergcal(peak.fit_results[0][0]):.2f}"
+                fit_el.attrib['area'] = f"{peak.fit_results[2][0]*peak.fit_results[0][1]*2.5066:.2f}"
+
+                area_el = ET.SubElement(peak_el, 'area')
+                total, baseline = self.area_estimate(peak)
+                area_el.attrib['total'] = f"{total:.2f}"
+                area_el.attrib['peak'] = f"{total-baseline:.2f}"
+                area_el.attrib['baseline'] = f"{baseline:.2f}"
+
+        tree = ET.ElementTree(spec)
+        tree.write(filepath, encoding='utf-8', xml_declaration=True)
+
+        dom = parse_xml(filepath)
+        pdom = dom.toprettyxml(indent='\t', newl='\n')
+        dom.unlink()
+        with open(filepath, 'w') as fileopen:
+            fileopen.write(pdom)
+
     # def plot_fitted_peaks(self, *args, axes: plt.Axes = None, **kargs) -> plt.Axes:
     #     if not hasattr(self, 'peaks'):
     #         raise ValueError(f"{self} does not have peaks.")
@@ -131,7 +184,7 @@ class Spectrum(np.ndarray):
     #         axes.fill_between()
 
     @classmethod
-    def from_GammaVision(cls, filename: str):
+    def from_GammaVision(cls, filename: str | Path):
         if Path(filename).suffix.lower() not in ['.spe', '.chn']:
             raise ValueError(f"{filename} is not a valid GammaVision file.")
         with open(filename, 'r') as fopen:
@@ -143,8 +196,22 @@ class Spectrum(np.ndarray):
             counts.append(int(filelines[index].strip()))
             index += 1
         self = cls(counts)
+
+        region_index = next((i for i, line in enumerate(filelines) if line.startswith('$ROI')), None)
+        if region_index is not None:
+            index = region_index + 2
+            self.peaks = []
+            while filelines[index].strip().isdigit():
+                left, right = filelines[index].split()
+                self.peaks.append(Region(int(left), int(right)))
+            index += 1
+
+        ergcal_index = next((i for i, line in enumerate(filelines) if line.startswith('$ENER_FIT')), None)
+        if ergcal_index is not None:
+            incerp, slope = filelines[ergcal_index+1].split()
+            self.ergcal = Calibration(data=['linear', float(slope), float(incerp)])
         return self
-        
+
 
 class SimulatedSpectrum(Spectrum):
     """
@@ -170,7 +237,7 @@ class SimulatedSpectrum(Spectrum):
 
         peaks = []
         for peak_info in peaks_info:
-            peaks.append(PeakRegion(int(peak_info[0]-peak_info[1]*3), int(peak_info[0]+peak_info[1]*3)))
+            peaks.append(Region(int(peak_info[0]-peak_info[1]*3), int(peak_info[0]+peak_info[1]*3)))
 
         self.baseline = self._gen_base()
         self.peakform = self._gen_peaks()

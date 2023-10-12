@@ -4,8 +4,8 @@ from typing import Literal
 from numpy.fft import fft, ifft
 from pywt import wavedec, waverec
 
-from Operator import Operator
-from Spectrum import Spectrum
+from .Operator import Operator
+from .Spectrum import Spectrum
 
 
 class CentroidSmoother(Operator):

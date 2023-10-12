@@ -1,28 +1,41 @@
 import numpy as np
-from abc import ABC, abstractmethod
 from copy import deepcopy
 from typing import Literal
 import gc
 
 
-class Calibration(ABC):
+class Calibration:
 
-    def __init__(self, calibration_info: dict = None, label: str = None):
+    def __init__(self, data: list, label: str = None):
 
         if label is None:
             label = 'Calibration'
         self.label = label
 
-        if calibration_info is None:
-            calibration_info = {}
-        self.calibration_info = calibration_info
+        self._data = data
 
-    @abstractmethod
-    def __run__(self, inp):
-        pass
+    def __call__(self, inp):
+        if self._data[0] is None:
+            return inp
+        if self._data[0] == 'linear':
+            return self._linear(inp)
+        elif self._data[0] == 'quadratic':
+            return self._quadratic(inp)
+
+    def _linear(self, inp):
+        return self._data[1] * inp + self._data[2]
+
+    def _quadratic(self, inp):
+        return self._data[1] * inp ** 2 + self._data[2] * inp + self._data[3]
+
+    def width(self, inp):
+        if self._data[0] is None:
+            return 1
+        if self._data[0] == 'linear':
+            return self._data[1]
 
 
-class PeakRegion:
+class Region:
 
     def __init__(self, left: int, right: int):
 
@@ -80,7 +93,7 @@ if __name__ == "__main__":
 
     # test boundary modification
     spec = SimulatedSpectrum()
-    peak = PeakRegion(10, 20)
+    peak = Region(10, 20)
     # print(spec[peak.indexes], peak.left, peak.right)
     # print(spec[peak.indexes], peak.left, peak.right)
 

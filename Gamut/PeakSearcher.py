@@ -1,9 +1,12 @@
-from Operator import Operator
-from Spectrum import Spectrum
 import numpy as np
-from utils import Differential, peak_fit
-from PeakRegion import PeakRegion
+
 from typing import Literal
+
+from .utils import Differential
+from .PeakRegion import Region
+
+from .Operator import Operator
+from .Spectrum import Spectrum
 
 
 class PeakSearcher(Operator):
@@ -11,7 +14,7 @@ class PeakSearcher(Operator):
     def __init__(self, label: str = None):
         super().__init__(1, label)
 
-    def _split(self, data: np.ndarray) -> list[PeakRegion]:
+    def _split(self, data: np.ndarray) -> list[Region]:
         """
         Split a bool sequence into pieces of consecutive True.
         """
@@ -23,20 +26,20 @@ class PeakSearcher(Operator):
                     start = i
             else:
                 if start is not None:
-                    peaks.append(PeakRegion(start, i-1))
+                    peaks.append(Region(start, i-1))
                     start = None
         if start is not None:
-            peaks.append(PeakRegion(start, i-1))
+            peaks.append(Region(start, i-1))
         return peaks
 
-    def _remove(self, peaks: list[PeakRegion], threshold: int):
+    def _remove(self, peaks: list[Region], threshold: int):
         peaks_copy = []
         for peak in peaks:
             if peak.length >= threshold:
                 peaks_copy.append(peak)
         return peaks_copy
 
-    def _correct(self, peaks: list[PeakRegion], shift: int, spectrum: Spectrum):
+    def _correct(self, peaks: list[Region], shift: int, spectrum: Spectrum):
         peaks_copy = []
         for peak in peaks:
             peak_copy = peak.copy()
@@ -92,7 +95,10 @@ class DifferentialPeakSearcher(PeakSearcher):
         differentiated = self._transform(searched)
         zeros = np.zeros(differentiated.shape, dtype=bool)
         for i in range(self._zero_width, differentiated.shape[0]-self._zero_width):
-            zeros[i] = np.all(differentiated[i-self._zero_width: i] > 0) and np.all(differentiated[i: i+self._zero_width] < 0)
+            if self._derive_order%2 == 1:
+                zeros[i] = np.all(differentiated[i-self._zero_width: i] >= differentiated[i]) and np.all(differentiated[i+1: i+self._zero_width+1] <= differentiated[i])
+            elif self._derive_order%2 == 0:
+                zeros[i] = np.all(differentiated[i-self._zero_width: i] >= differentiated[i]) and np.all(differentiated[i+1: i+self._zero_width+1] >= differentiated[i])
         peaks = self._split(zeros)
 
         for peak in peaks:

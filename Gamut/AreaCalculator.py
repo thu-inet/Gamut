@@ -2,9 +2,9 @@ import numpy as np
 from scipy.optimize import fmin
 from copy import deepcopy
 
-from Spectrum import Spectrum
-from Operator import Operator
-from PeakRegion import PeakRegion
+from .Spectrum import Spectrum
+from .Operator import Operator
+from .PeakRegion import Region
 
 
 class AverageClassicPeakAreaCalculator(Operator):
@@ -28,7 +28,7 @@ class AverageClassicPeakAreaCalculator(Operator):
             peak.area = sum(peak_areas) / len(peak_areas)
         return calculated
 
-    def _calculate(self, peak: PeakRegion):
+    def _calculate(self, peak: Region):
         spectrum = peak.spectrum
         peak_areas = []
         for i in range(self._times):
@@ -55,7 +55,7 @@ class AverageCovellPeakAreaCalculator(Operator):
             peak.area = sum(peak_areas) / len(peak_areas)
         return calculated
 
-    def _calculate(self, peak: PeakRegion):
+    def _calculate(self, peak: Region):
         spectrum = peak.spectrum
         peak_areas = []
         for width in range(self._init_width, self._init_width+self._times+1):
@@ -84,7 +84,7 @@ class AverageWassonPeakAreaCalculator(Operator):
                 peak.area = 0
         return calculated
 
-    def _calculate(self, peak: PeakRegion):
+    def _calculate(self, peak: Region):
         spectrum = peak.spectrum
         peak_areas = []
         baseline = np.zeros(spectrum.shape)
@@ -114,7 +114,7 @@ class SinglePeakFitter(Operator):
             peak.fit_results = deepcopy(fit_results)
         return fitted
 
-    def _fit(self, peak: PeakRegion, fitted: Spectrum):
+    def _fit(self, peak: Region, fitted: Spectrum):
         best_error = 1000
         heights = np.ones((2, ))  # mutable object to transfer data without return
         shapes = np.zeros((fitted[peak.indexes].shape[0], 2))
@@ -178,7 +178,6 @@ class EntiretyPeakFitter(Operator):
                 best_shapes = shapes.copy()
                 best_heights = heights.copy()
                 best_fcounts = fcounts.copy()
-        # print(best_params)
         fitted[:] = fcounts
         fitted.heights = best_heights
         fitted.peak_params = best_params
@@ -244,7 +243,7 @@ if __name__ == "__main__":
 
     fiter = SinglePeakFitter()
     fit = fiter(simu)
-    
+
     # for peak in fit.peaks:
     #     print(peak.fit_results[0][0], peak.fit_results[0][1], peak.fit_results[0][1] * peak.fit_results[2][0] * (np.pi * 2)**0.5)
 

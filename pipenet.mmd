@@ -1,6 +1,0 @@
-graph LR
-    Spectrum0["Spectrum[0]"] -- "CentroidSmoother[O2]" --> Pipe01["Pipe[0]Spectrum[1]"]
-    Pipe01["Pipe[0]Spectrum[1]"] -- "SNIPstripper[O4]" --> Pipe02["Pipe[0]Spectrum[2]"]
-    Pipe02["Pipe[0]Spectrum[2]"] -- "GaussPeakSearcher[O2]" --> Spectrum1["Spectrum[1]"]
-    Spectrum0["Spectrum[0]"] -- "WaveletSmoother[O6]" --> Spectrum1["Spectrum[1]"]
-    Spectrum1["Spectrum[1]"] -- "FPAreaCalculator[Convell]" --> Spectrum2["Spectrum[2]"]
