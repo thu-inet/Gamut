@@ -1,8 +1,8 @@
 import numpy as np
 
 from typing import Callable, Literal
-from Spectrum import Spectrum
-from Operator import Operator
+from .Spectrum import Spectrum
+from .Operator import Operator
 
 
 class FunctionalOperator(Operator):
@@ -35,7 +35,7 @@ class Stripper(Operator):
     """
     Strip the second spectrum from first spsectrum, and limit the minimun to be zero.
     """
-    def __init__(self, min: int = 1):
+    def __init__(self, min: int = 0):
         self._min = min
         super().__init__(2, 'Stripper')
 

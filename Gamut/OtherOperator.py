@@ -1,6 +1,8 @@
 import numpy as np
+
 from .Spectrum import Spectrum
 from .Operator import Operator
+from .PeakRegion import Calibration
 
 
 class SNIPStripper(Operator):
@@ -19,15 +21,57 @@ class SNIPStripper(Operator):
 
     def __run__(self, spectra: list[Spectrum]) -> Spectrum:
         stripped = spectra[0].copy()
-        loged = np.log((spectra[0] + 1) ** 0.5 + 1)
-        logloged = np.log(loged + 1)
-        padded = np.pad(logloged, pad_width=self._order, mode='reflect')
+        logloged = np.log(np.log((spectra[0] + 1) ** 0.5 + 1) + 1)
+        padded = np.pad(logloged, pad_width=self._order*2, mode='edge')
         for p in range(self._order, 0, -1):
             boardened = np.pad(padded, pad_width=(p, 0), mode='edge')[: -p] + \
-                                np.pad(padded, pad_width=(0, p), mode='edge')[ p: ]
+                                np.pad(padded, pad_width=(0, p), mode='edge')[p:]
+            # padded = np.minimum(padded, boardened / 2)
             padded = np.minimum(padded, boardened / 2)
-        sliced = padded[self._order: -self._order]
-        recovered = (np.exp(np.exp(sliced) - 1) - 1) ** 2
+        sliced = padded[self._order*2: -self._order*2]
+        recovered = (np.exp(np.exp(sliced) - 1) - 1) ** 2 - 1
+        stripped[:] = recovered
+        return stripped
+
+
+class AdaptiveSNIPStripper(Operator):
+    """"
+    Classic reverse SNIP baseline stripping algorithm.
+    """
+    def __init__(self, label: str = None):
+        """
+        :param order: time to repeat boardening operation
+        :param label: label for the operator
+        """
+        if label is None:
+            label = "AdaptiveSNIPStripper"
+        super().__init__(1, label)
+
+    def __run__(self, spectra: list[Spectrum]) -> Spectrum:
+        stripped = spectra[0].copy()
+        logloged = np.log(np.log((spectra[0] + 1) ** 0.5 + 1) + 1)
+        for region in stripped.regions:
+            order = round(max([peak['stderr']*4 for peak in region.peaks if 'stderr' in peak.keys()]))
+
+            left = min(order, region.left)
+            right = min(order, stripped.length-1-region.right)
+            val_left = logloged[region.left-left: region.left+1].mean()
+            val_right = logloged[region.right: region.right+right+1].mean()
+            logloged_region = logloged[region.left-left: region.right+right+1].copy()
+            padded_region = np.pad(logloged_region, mode='constant',
+                                   constant_values=(val_left, val_right),
+                                   pad_width=(order-left, order-right))
+
+            for p in range(order, 0, -1):
+                p2 = round(p/2)
+                boardened = padded_region[order-p: -order-p] + padded_region[order+p: -order+p+len(padded_region)]
+                boardened2 = padded_region[order-p: -order-p] + padded_region[order+p: -order+p+len(padded_region)] \
+                    + padded_region[order-p2: -order-p2] + padded_region[order+p2: -order+p2+len(padded_region)]
+                padded_region[order: -order] = np.minimum(padded_region[order: -order], np.maximum(boardened/2, boardened2/4))
+                # padded_region[order: -order] = boardened2 / 4
+            logloged[region.indexes] = padded_region[order: -order].copy()
+
+        recovered = (np.exp(np.exp(logloged) - 1) - 1) ** 2 - 1
         stripped[:] = recovered
         return stripped
 
@@ -66,7 +110,7 @@ class WhittakerSmoother(Operator):
         return smoothed
 
 
-class IterativeNonEquilibriumWhittakerStripper(WhittakerSmoother):
+class IterativeAsymmetricWhittakerStripper(WhittakerSmoother):
 
     def __init__(self, smooth_weight: float = 1E3, times: int = 10, label: str = None):
         self._times = times
@@ -78,8 +122,6 @@ class IterativeNonEquilibriumWhittakerStripper(WhittakerSmoother):
         fit_weight = np.ones(spectra[0].shape[0])
         striped = super().__run__(spectra, np.diag(fit_weight))
         for i in range(self._times):
-            # fit_weight[striped <= spectra[0]] = 1E-2
-            # fit_weight[striped > spectra[0]] = 1
             fit_weight[striped <= spectra[0]] = 1E-2
             fit_weight[striped > spectra[0]] = 1E-2
             fit_weight[striped > spectra[0]+0.5*spectra[0]**0.5] = 1
@@ -87,22 +129,19 @@ class IterativeNonEquilibriumWhittakerStripper(WhittakerSmoother):
         return striped
 
 
+class FWHMCalibrator(Operator):
 
-if __name__ == "__main__":
+    def __init__(self, label: str = None):
+        if label is None:
+            label = "FWHMCalibrator"
+        super().__init__(1, label)
 
-    from Spectrum import simuspecs
-    from matplotlib import pyplot as plt
-
-    # simu = simuspecs['doublepeak_normal_narrow']
-    simu = simuspecs['synthesized']
-    simu.plot()
-
-    whi = WhittakerSmoother('constant', 10)
-    whi2 = IterativeNonEquilibriumWhittakerStripper(1E4)
-
-    base = whi2(simu)
-    simu -= base
-
-    base.plot()
-    simu.plot()
-    plt.show()
+    def __run__(self, spectra: list[Spectrum], *args, **kargs) -> Spectrum:
+        cal_index, cal_FWHM = [], []
+        calibrated = spectra[0].copy()
+        for region in calibrated.regions:
+            if calibrated.fitness_estimate(region) >= 0.9:
+                cal_index.extend([peak['center'] for peak in region.peaks])
+                cal_FWHM.extend([peak['stderr']*2.355 for peak in region.peaks])
+        calibrated.FWHMcal = Calibration(method='FWHMcal', data=[cal_index, cal_FWHM])
+        return calibrated

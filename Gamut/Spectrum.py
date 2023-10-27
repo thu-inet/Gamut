@@ -1,19 +1,24 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import xml.etree.ElementTree as ET
+import pickle
+import pandas as pd
 
+from time import strftime, localtime
 from pathlib import Path
 from copy import deepcopy
 from typing import Callable
 from xml.dom.minidom import parse as parse_xml
 
-from .plot_settings import markers
+from .plot_settings import colors
 from .PeakRegion import Region, Calibration
 
 
 class Spectrum(np.ndarray):
     """
-    Spectrum data.
+    1. The basic object of Gamut, the Spectrum. It is used to store data of a spectrum.
+    2. Intrinsiclly it is a view of 1-d numpy.ndarray, so its all methods and attributes are available.
+    3. Contains three main sub-objects: regions, ergcal, and FWHMcal. Attrs to store other data.
     """
     def __new__(cls, counts: np.ndarray, *args, **kargs):
         self = np.asarray(counts).view(cls)
@@ -22,21 +27,30 @@ class Spectrum(np.ndarray):
     def __array_finalize__(self, obj):
         if obj is None:
             return
-        self._label = getattr(obj, 'label', None)
-        self._peaks = getattr(obj, 'peaks', None)
-        self.ergcal = getattr(obj, 'ergcal', None)
-        if (attrs := getattr(obj, 'attrs', None)) is not None:
-            self._attrs = deepcopy(attrs)
-        else:
-            self._attrs = None
+        self._label = deepcopy(getattr(obj, '_label', 'Spectrum'))
+        self._regions = deepcopy(getattr(obj, '_regions', []))
+        self._ergcal = deepcopy(getattr(obj, '_ergcal', Calibration()))
+        self._FWHMcal = deepcopy(getattr(obj, '_FWHMcal', Calibration()))
+        self._attrs = deepcopy(getattr(obj, '_attrs', None))
 
-    def __init__(self, counts: list | np.ndarray, label: str = None, attrs: dict = None):
+    def __init__(self, counts: list | np.ndarray, label: str = None,
+                 regions: list[Region] = None, ergcal: Calibration = None,
+                 FWHMcal: Calibration = None, attrs: dict = None):
         if label is None:
             label = 'Spectrum'
-        self._label = label
-
+        if regions is None:
+            regions = []
+        if ergcal is None:
+            ergcal = Calibration()
+        if FWHMcal is None:
+            FWHMcal = Calibration()
         if attrs is None:
             attrs = {}
+
+        self._label = label
+        self._regions = regions
+        self._ergcal = ergcal
+        self._FWHMcal = FWHMcal
         self._attrs = attrs
 
     def __array_wrap__(self, out_arr, context=None):
@@ -54,6 +68,19 @@ class Spectrum(np.ndarray):
     def __str__(self):
         return f"Spectrum[{self.label}]"
 
+    def __reduce__(self):
+        pickled_state = super().__reduce__()
+        new_state = pickled_state[2] + (self._label, self._regions, self._ergcal, self._FWHMcal, self._attrs)
+        return (pickled_state[0], pickled_state[1], new_state)
+
+    def __setstate__(self, state):
+        self._label = state[-5]
+        self._regions = state[-4]
+        self._ergcal = state[-3]
+        self._FWHMcal = state[-2]
+        self._attrs = state[-1]
+        super().__setstate__(state[0:-5])
+
     @property
     def label(self):
         return self._label
@@ -61,6 +88,10 @@ class Spectrum(np.ndarray):
     @label.setter
     def label(self, value):
         self._label = value
+
+    @property
+    def energies(self):
+        return self.ergcal(np.arange(len(self)))
 
     @property
     def indexes(self):
@@ -83,23 +114,46 @@ class Spectrum(np.ndarray):
         return self.shape[0]
 
     @property
-    def peaks(self):
-        return self._peaks
+    def regions(self):
+        return self._regions
 
-    @peaks.setter
-    def peaks(self, peaks: list[Region]):
-        self._peaks = peaks
+    @regions.setter
+    def regions(self, regions: list[Region]):
+        self._regions = regions
+
+    @property
+    def ergcal(self):
+        return self._ergcal
+
+    @ergcal.setter
+    def ergcal(self, ergcal):
+        self._ergcal = ergcal
+
+    @property
+    def FWHMcal(self):
+        return self._FWHMcal
+
+    @FWHMcal.setter
+    def FWHMcal(self, FWHMcal):
+        self._FWHMcal = FWHMcal
 
     def copy(self):
         return deepcopy(self)
 
-    def area_estimate(self, peak: Region) -> tuple:
+    def area_estimate(self, region: Region) -> tuple:
         """
-        Estimate peak area of spectrum
+        Estimate peak area of spectrum in a region based on classic counting method and linear baseline assumption.
         """
-        total = sum(self[peak.indexes])
-        baseline = (self[peak.left] + self[peak.right]) * peak.length / 2
+        total = sum(self[region.indexes])
+        baseline = (self[region.left] + self[region.right]) * region.length / 2
         return total, baseline
+
+    def fitness_estimate(self, region: Region) -> float:
+        """
+        Estimate fitness of spectrum in a region based on fitted parameters.
+        """
+        fcounts = region.fit_peaks() + region.fit_baseline()
+        return 1 - ((fcounts - self[region.indexes])**2).sum() / ((self[region.indexes] - self[region.indexes].mean())**2).sum()
 
     def plot(self, *args, axes: plt.Axes = None, **kargs) -> plt.Axes:
         """
@@ -107,84 +161,115 @@ class Spectrum(np.ndarray):
         """
         if axes is None:
             axes = plt.gca()
-        if 'label' not in kargs:
-            kargs['label'] = self.label
-        if hasattr(self, 'ergcal'):
-            axes.plot(self.ergcal(self.indexes), self, *args, **kargs)
-        else:
-            axes.plot(self, *args, **kargs)
+        axes.plot(self.energies, self, *args, **kargs, label=self._label)
         axes.set_ylim(0, )
         axes.set_xlim(0, )
-
         return axes
 
-    def plot_peaks(self, *args, axes: plt.Axes = None, **kargs) -> plt.Axes:
-        if not hasattr(self, 'peaks'):
-            raise ValueError(f"{self} does not have peaks.")
+    def plot_regions(self, *args, axes: plt.Axes = None, **kargs) -> plt.Axes:
+        """
+        Plot regions of the spectrum, with peaks marked as stars.
+        """
+        if not hasattr(self, 'regions'):
+            raise ValueError(f"{self} does not have regions. Call Gamut.PeakSearcher first.")
         if axes is None:
             axes = plt.gca()
-        if hasattr(self, 'ergcal'):
-            for i, peak in enumerate(self.peaks):
-                axes.plot(self.ergcal(peak.indexes), self[peak.indexes], *args, **kargs, marker=markers(i))
+        for i, region in enumerate(self.regions):
+            axes.plot(self.ergcal(region.indexes), self[region.indexes], *args, **kargs, color=colors(i), linewidth=2, alpha=0.8)
+            for peak in region.peaks:
+                axes.plot(self.ergcal(peak['location']), self[peak['location']], *args, **kargs, color=colors(i), marker='*', markersize=8)
+        return axes
+
+    @staticmethod
+    def _gaussian(indexes, center, stderr):
+        return np.exp(-(indexes - center) ** 2 / (2 * stderr ** 2))
+
+    def plot_peaks(self, *args, axes: plt.Axes = None, baseline: np.ndarray = None, **kargs) -> plt.Axes:
+        """
+        Plot detailed fitted peaks in regions of the spectrum.
+        Baseline is optional to reconstruct the unstripped spectrum.
+        """
+        if baseline is not None:
+            baseline = baseline.copy().astype(np.float64)
         else:
-            for i, peak in enumerate(self.peaks):
-                axes.plot(peak.indexes, self[peak.indexes], *args, **kargs, marker=markers(i))
+            baseline = np.zeros(self.length)
+        fitted_spectrum = baseline.copy()
+        if axes is None:
+            axes = plt.gca()
+        for region in self.regions:
+            if self.fitness_estimate(region) > 0.5:
+                fitted_baseline = region.fit_baseline()
+                baseline[region.indexes] += fitted_baseline
+                fitted_spectrum[region.indexes] += fitted_baseline
+                for peak in region.peaks:
+                    if 'stderr' in peak.keys():
+                        fitted_indexes = np.arange(max(int(peak['center']-4*peak['stderr']), 0), min(int(peak['center']+4*peak['stderr']), self.length-1))
+                        fitted_peak = region.fit_peak(peak, fitted_indexes)
+                        axes.fill_between(self.ergcal(fitted_indexes), baseline[fitted_indexes], baseline[fitted_indexes] + fitted_peak, alpha=0.5)
+                        fitted_spectrum[fitted_indexes] += fitted_peak
+        axes.plot(self.energies, baseline, alpha=0.4, linewidth=1, label=self.label+'(baseline)', linestyle='--')
+        axes.plot(self.energies, fitted_spectrum, linewidth=1, label=self.label+'(fitted)')
+        return axes
 
     def export_to_xml(self, filepath: str | Path):
         """
         Export the report to a xml file.
         """
         spec = ET.Element('spectrum')
-        spec.attrib['name'] = self.label.replace('>', r'\>')
+        spec.attrib['name'] = self.label
         spec.attrib['length'] = str(self.length)
 
-        if hasattr(self, 'peaks'):
-            peaks = ET.SubElement(spec, 'peaks')
-            for peak in self.peaks:
-                peak_el = ET.SubElement(peaks, 'peak')
-                peak_el.attrib['left'] = str(peak.indexes[0])
-                peak_el.attrib['right'] = str(peak.indexes[-1])
-                
-                if hasattr(self, 'ergcal'):
-                    erg_el = ET.SubElement(peak_el, 'erg')
-                    erg_el.attrib['left'] = f"{self.ergcal(peak.indexes[0]):.2f}"
-                    erg_el.attrib['right'] = f"{self.ergcal(peak.indexes[-1]):.2f}"
-    
-                fit_el = ET.SubElement(peak_el, 'fit')
-                fit_el.attrib['amplitude'] = f"{peak.fit_results[2][0]:.2f}"
-                fit_el.attrib['centroid'] = f"{peak.fit_results[0][0]:.2f}"
-                fit_el.attrib['stderror'] = f"{peak.fit_results[0][1]:.2f}"
-                fit_el.attrib['centroid_erg'] = f"{self.ergcal(peak.fit_results[0][0]):.2f}"
-                fit_el.attrib['area'] = f"{peak.fit_results[2][0]*peak.fit_results[0][1]*2.5066:.2f}"
+        if hasattr(self, 'ergcal'):
+            ergcal_el = ET.SubElement(spec, 'ergcal')
+            ergcal_el.attrib['method'] = self.ergcal.method
+            ergcal_el.attrib['params'] = " ".join([f"{val:.4f}" for val in self.ergcal.params])
+            if hasattr(self.ergcal, 'data'):
+                ET.SubElement(spec, 'data_ind').text = " ".join([f"{val:.2f}" for val in self.ergcal.data[0, :]])
+                ET.SubElement(spec, 'data_val').text = " ".join([f"{val:.2f}" for val in self.ergcal.data[1, :]])
 
-                area_el = ET.SubElement(peak_el, 'area')
-                total, baseline = self.area_estimate(peak)
-                area_el.attrib['total'] = f"{total:.2f}"
-                area_el.attrib['peak'] = f"{total-baseline:.2f}"
-                area_el.attrib['baseline'] = f"{baseline:.2f}"
+        if hasattr(self, 'FWHMcal'):
+            FWHMcal_el = ET.SubElement(spec, 'FWHMcal')
+            FWHMcal_el.attrib['method'] = self.FWHMcal.method
+            FWHMcal_el.attrib['params'] = " ".join([f"{val:.4f}" for val in self.FWHMcal.params])
+            if hasattr(self.FWHMcal, 'data'):
+                ET.SubElement(spec, 'data_ind').text = " ".join([f"{val:.2f}" for val in self.FWHMcal.data[0, :]])
+                ET.SubElement(spec, 'data_val').text = " ".join([f"{val:.2f}" for val in self.FWHMcal.data[1, :]])
+            if hasattr(self.FWHMcal, '_fitness'):
+                FWHMcal_el.attrib['fitness'] = f"{self.FWHMcal._fitness:.2f}"
+
+        if hasattr(self, 'regions'):
+            regions_el = ET.SubElement(spec, 'regions')
+            for region in self.regions:
+                region_el = ET.SubElement(regions_el, 'region')
+                region_el.attrib['ind_left'] = str(region.left)
+                region_el.attrib['ind_right'] = str(region.right)
+                region_el.attrib['erg_left'] = f"{self.ergcal(region.left):.2f}"
+                region_el.attrib['erg_right'] = f"{self.ergcal(region.right):.2f}"
+                region_el.attrib['N_peaks'] = str(len(region.peaks))
+                region_el.attrib['fitness'] = f"{self.fitness_estimate(region):.2f}"
+                region_el.attrib['slope'] = f"{region.slope:.2f}"
+                region_el.attrib['offset'] = f"{region.offset:.2f}"
+                for peak in region.peaks:
+                    peak_el = ET.SubElement(region_el, 'peak')
+                    for key, val in peak.items():
+                        peak_el.attrib[key] = str(val) if isinstance(val, int) else f"{val:.2f}"
+                    peak_el.attrib['energy'] = f"{self.ergcal(peak['location']):.2f}"
+
+        ET.SubElement(spec, 'counts').text = " ".join([f"{val:.2f}" for val in self.counts])
 
         tree = ET.ElementTree(spec)
         tree.write(filepath, encoding='utf-8', xml_declaration=True)
-
         dom = parse_xml(filepath)
         pdom = dom.toprettyxml(indent='\t', newl='\n')
         dom.unlink()
         with open(filepath, 'w') as fileopen:
             fileopen.write(pdom)
 
-    # def plot_fitted_peaks(self, *args, axes: plt.Axes = None, **kargs) -> plt.Axes:
-    #     if not hasattr(self, 'peaks'):
-    #         raise ValueError(f"{self} does not have peaks.")
-    #     if axes is None:
-    #         axes = plt.gca()
-    #     for i, peak in enumerate(self.peaks):
-    #         if np.any([not hasattr(peak, attr) for attr in ['params', 'shapes', 'heights', 'fcounts']]):
-    #             continue
-    #         axes.plot(peak.indexes, peak.fcounts, *args, **kargs, marker=plot_settings.markers)
-    #         axes.fill_between()
-
     @classmethod
     def from_GammaVision(cls, filename: str | Path):
+        """
+        Import spectrum from Ortec .chn or .spe ASCII plain text file.
+        """
         if Path(filename).suffix.lower() not in ['.spe', '.chn']:
             raise ValueError(f"{filename} is not a valid GammaVision file.")
         with open(filename, 'r') as fopen:
@@ -200,16 +285,88 @@ class Spectrum(np.ndarray):
         region_index = next((i for i, line in enumerate(filelines) if line.startswith('$ROI')), None)
         if region_index is not None:
             index = region_index + 2
-            self.peaks = []
+            self.regions = []
             while filelines[index].strip().isdigit():
                 left, right = filelines[index].split()
-                self.peaks.append(Region(int(left), int(right)))
+                self.regions.append(Region(int(left), int(right)))
             index += 1
 
         ergcal_index = next((i for i, line in enumerate(filelines) if line.startswith('$ENER_FIT')), None)
         if ergcal_index is not None:
             incerp, slope = filelines[ergcal_index+1].split()
-            self.ergcal = Calibration(data=['linear', float(slope), float(incerp)])
+            self.ergcal = Calibration(method='linear', params=[float(incerp), float(slope), 0])
+        return self
+
+    @classmethod
+    def from_pickle(cls, filename: str | Path):
+        """
+        Import spectrum from pickled Spectrum file.
+        """
+        with open(filename, 'rb') as fopen:
+            self = pickle.load(fopen)
+        return self
+
+    def export_to_pickle(self, filename: str | Path):
+        """
+        Export to binary pickle file.
+        """
+        with open(filename, 'wb') as fopen:
+            pickle.dump(self, fopen)
+
+    def export_to_GammaVision(self, filename: str | Path):
+        """
+        Export to Ortec plain text file.
+        """
+        with open(filename, 'w') as fopen:
+            fopen.write("$SPEC_ID:\n\n")
+            fopen.write("$SPEC_REM:\n\n")
+            fopen.write("$DATE_MEA:\n" + strftime(r"%m/%d/%Y %H:%M:%S", localtime()) + "\n")
+            fopen.write("$MEAS_TIME:\n" + "1000 1000\n")
+            fopen.write(f"$DATA:\n0 {self.length-1}\n")
+            fopen.write("\n".join([f"{round(c):>8d}" for c in self.counts]) + "\n")
+            if len(self.regions) != 0:
+                fopen.write(f"$ROI:\n{len(self.regions)}\n" + "\n".join([f"{region.left} {region.right}" for region in self.regions]))
+            fopen.write("$PRESETS:\nNone\n0\n0\n")
+            fopen.write(f"$ENER_FIT:\n{self.ergcal.params[0]:8.6f} {self.ergcal.params[1]:8.6f}\n")
+
+    @classmethod
+    def from_excel(cls, filename: str | Path, energy_column: str, counts_column: str):
+        """
+        Import spectrum from columns of excel files.
+        """
+        df = pd.read_excel(filename, index_col=0)
+        self = cls(df[counts_column])
+        self.ergcal = Calibration(method='linear', data=[np.arange(len(df[energy_column])), df[energy_column]])
+        return self
+
+    @classmethod
+    def from_xml(cls, filename: str | Path):
+        """
+        Import spectrum from xml files.
+        """
+        spec_xml = parse_xml(str(filename))
+        spec_el = spec_xml.getElementsByTagName('counts')[0]
+        self = cls(counts=[float(val) for val in spec_el.firstChild.nodeValue.split()],
+                   label=spec_el.getAttribute('name'))
+
+        if (ergcal_el := spec_xml.getElementsByTagName('ergcal')[0]) is not None:
+            self.ergcal = Calibration(method=ergcal_el.getAttribute('method'),
+                                      params=[float(val) for val in ergcal_el.getAttribute('params').split()])
+
+        if (FWHMcal_el := spec_xml.getElementsByTagName('FWHMcal')[0]) is not None:
+            self.FWHMcal = Calibration(method=FWHMcal_el.getAttribute('method'),
+                                       params=[float(val) for val in FWHMcal_el.getAttribute('params').split()])
+
+        if (regions_el := spec_xml.getElementsByTagName('regions')[0]) is not None:
+            for region_el in regions_el.getElementsByTagName('region'):
+                region = Region(int(region_el.getAttribute('ind_left')), int(region_el.getAttribute('ind_right')))
+                region.slope = float(region_el.getAttribute('slope'))
+                region.offset = float(region_el.getAttribute('offset'))
+                for peak_el in region_el.getElementsByTagName('peak'):
+                    peak = dict([(attr.name, float(attr.value)) for attr in peak_el.attributes.values()])
+                    peak['location'] = int(peak['location'])
+                    region.peaks.append(peak)
+                self.regions.append(region)
         return self
 
 
@@ -228,21 +385,27 @@ class SimulatedSpectrum(Spectrum):
                  base_intensity: int = 100,
                  base_amplitude: int = 100,
                  base_function: Callable = lambda x: x,
-                 label: str = None):
+                 random_seed: int = 0,
+                 label: str = None,
+                 ergcal: Calibration = None,
+                 FWHMcal: Calibration = None
+                 ):
 
-        self.peaks_info = peaks_info
+        self.regions_info = peaks_info
         self.base_intensity = base_intensity
         self.base_amplitude = base_amplitude
         self.base_function = base_function
+        self.random_seed = random_seed
+        np.random.seed(self.random_seed)
 
-        peaks = []
+        self.predefined_regions = []
         for peak_info in peaks_info:
-            peaks.append(Region(int(peak_info[0]-peak_info[1]*3), int(peak_info[0]+peak_info[1]*3)))
+            self.predefined_regions.append(Region(int(peak_info[0]-peak_info[1]*3), int(peak_info[0]+peak_info[1]*3)))
 
         self.baseline = self._gen_base()
         self.peakform = self._gen_peaks()
         self[:] = self.baseline[:] + self.peakform[:]
-        super().__init__(self.baseline + self.peakform, label)
+        super().__init__(self.baseline + self.peakform, label, ergcal=ergcal, FWHMcal=FWHMcal)
 
     def _gen_base(self):
         base = self.base_function(np.linspace(0, 1, self.length))
@@ -253,53 +416,47 @@ class SimulatedSpectrum(Spectrum):
 
     def _gen_peaks(self):
         peak = np.zeros((self.length,))
-        for peak_info in self.peaks_info:
+        for peak_info in self.regions_info:
             peak += self._gen_peak(*peak_info)
         return peak
 
     def _gen_peak(self, centroid, stderror, area):
         channels = np.arange(0, self.length)
         amplitude = area / stderror / (2*np.pi)**0.5
+        # print(amplitude, stderror)
         return amplitude * np.exp(- (channels-centroid)**2 / stderror**2 / 2)
 
 
 simuspecs = {
-    'simple': SimulatedSpectrum(base_intensity=100, base_amplitude=100, base_function=lambda x:  x**0 + 1,
-                                    peaks_info=[[95, 6, 4000]]),
-    'doublepeak_slight': SimulatedSpectrum(base_intensity=100, base_amplitude=100, base_function=lambda x:  x,
-                                    peaks_info=[[70, 6, 4000], [105, 7, 3000]]),
-    'doublepeak_normal_narrow': SimulatedSpectrum(base_intensity=100, base_amplitude=1000, base_function=lambda x:  1 / (x + 0.1),
-                                    peaks_info=[[90, 3, 4000], [100, 2.5, 3000]]),
-    'doublepeak_normal': SimulatedSpectrum(base_intensity=100, base_amplitude=100, base_function=lambda x:  1 / (x + 1),
-                                    peaks_info=[[70, 6, 4000], [100, 10, 3000]]),
-    'doublepeak_severe': SimulatedSpectrum(base_intensity=200, base_amplitude=100, base_function=lambda x:  np.abs((x-0.4)),
-                                    peaks_info=[[70, 7, 4000], [90, 10, 3000]]),
-    'synthesized': SimulatedSpectrum(base_intensity=100, base_amplitude=100, base_function=lambda x:  x,
-                                    peaks_info=[[30, 2.5, 4000], [70, 3, 2000], [110, 4, 1000],  [150, 4.5, 2400], [165, 4.3, 1600]])
+    'simple': {'base_intensity': 100, 'base_amplitude': 100, 'label': 'simple',  # FWHM~2.355*5~14.13, params[linear]=[0.14873, 0]
+               'base_function': lambda x:  x**0 + 1, 'peaks_info': [[95, 6, 4000]], 'FWHMcal': Calibration('linear', params=[0, 0.14873, 0])},
+    'double_slight': {'base_intensity': 100, 'base_amplitude': 100, 'label': 'double_slight',
+                      'base_function': lambda x:  x, 'peaks_info': [[70, 6, 4000], [105, 7, 3000]], 'FWHMcal': Calibration('linear', params=[9.4225, 0.067285, 0])},
+    'double_normal_narrow': {'base_intensity': 100, 'base_amplitude': 1000, 'label': 'double_normal_narrow',
+                             'base_function': lambda x:  1 / (x + 0.1), 'peaks_info': [[90, 3, 4000], [100, 2.5, 3000]]},
+    'double_normal': {'base_intensity': 100, 'base_amplitude': 100, 'label': 'double_normal',
+                      'base_function': lambda x:  1 / (x + 1), 'peaks_info': [[70, 6, 4000], [100, 10, 3000]]},
+    'double_severe': {'base_intensity': 200, 'base_amplitude': 100, 'label': 'double_severe',
+                      'base_function': lambda x:  np.abs((x-0.4)), 'peaks_info': [[70, 7, 4000], [90, 10, 3000]]},
+    'synthesized': {'base_intensity': 100, 'base_amplitude': 100, 'label': 'synthesized_multiplets',
+                    'base_function': lambda x:  x, 'peaks_info': [[30, 2.5, 4000], [60, 3, 2000], [100, 4, 1000],  [130, 4.5, 2400], [145, 4.3, 1600], [175, 4.7, 2600]]},
+    'synthesized_2': {'base_intensity': 100, 'base_amplitude': 100, 'label': 'synthesized_multiplets', 'length': 500,  # with FWHM cal: 2+0.03*(E+0.05*E**2)**0.5
+                      'base_function': lambda x:  x, 'peaks_info': [[30, 2.33, 2000], [45, 2.42, 2000], [70, 2.57, 4000], [75, 2.61, 1500],
+                                                                    [110, 2.83, 1500], [117, 2.87, 500], [126, 2.90, 2000],
+                                                                    [150, 3.07, 2400], [165, 3.16, 1600],
+                                                                    [230, 3.56, 4000], [275, 3.83, 2000], [290, 3.93, 2500], [305, 4.02, 1500],
+                                                                    [310, 4.04, 1500], [317, 4.1, 500], [344, 4.22, 2000], [374, 4.40, 2000], [386, 4.50, 2000],
+                                                                    [450, 4.91, 2400], [465, 5.01, 1600]]},
+    'single_peaks': {'base_intensity': 100, 'base_amplitude': 100, 'label': 'synthesized_singlets', 'length': 500,  # with FWHM cal: 2+0.03*(E+0.05*E**2)**0.5
+                     'base_function': lambda x:  x, 'peaks_info': [[110, 2.95, 2000], [130, 3, 2000], [180, 3.41, 4000], [230, 3.75, 1500],
+                                                                   [285, 4.14, 2500], [335, 4.4, 2500], [375, 4.7, 1000],
+                                                                   [410, 4.95, 2400], [450, 5.2, 1600]]},
+    'single_peaks_bigger': {'base_intensity': 100, 'base_amplitude': 100, 'label': 'synthesized_singlets', 'length': 500,  # with FWHM cal: 2+0.03*(E+0.05*E**2)**0.5
+                            'base_function': lambda x:  x, 'peaks_info': [[110, 2.95, 4000], [130, 3, 4000], [180, 3.41, 8000], [230, 3.75, 3500],
+                                                                          [285, 4.14, 5000], [335, 4.4, 5000], [375, 4.7, 2000],
+                                                                          [410, 4.95, 4800], [450, 5.2, 3200]]},
+    'single_peaks_biggest': {'base_intensity': 100, 'base_amplitude': 100, 'label': 'synthesized_singlets', 'length': 500,  # with FWHM cal: 2+0.03*(E+0.05*E**2)**0.5
+                            'base_function': lambda x:  x, 'peaks_info': [[110, 2.95, 12000], [130, 3, 8000], [180, 3.41, 6000], [230, 3.75, 7000],
+                                                                          [285, 4.14, 10000], [335, 4.4, 10000], [375, 4.7, 5000],
+                                                                          [410, 4.95, 7800], [450, 5.2, 6200]]}
 }
-
-
-if __name__ == "__main__":
-
-    # Initilization
-    spec = Spectrum(np.arange(1, 8), label="test", attrs={"a": 1, "b": 2})
-
-    # Check behavior
-    print(f"1. Print length = {len(spec)}")
-    print(f"2. Slice like a array: spec[1:3] = {spec[1:3]}, spec[1:] = {spec[1:]}, spec[1:3:2] = {spec[1:3:2]}")
-    print(f"3. Calculate like a array: spec+1 = {(spec+1)}, spec+spec = {(spec+spec)}, sum(spec) = {sum(spec)}")
-
-    # test spectrum modification
-    spec = Spectrum(np.zeros(10))
-    print(id(spec), spec.sum(), spec.counts)
-    spec[:5] = 1
-    print(id(spec), spec.sum(), spec.counts)
-    spec[5:] = 2
-    print(id(spec), spec.sum(), spec.counts)
-    spec[:] = np.arange(10)
-    print(id(spec), spec.sum(), spec.counts)
-
-    # test spectrum
-    simu = SimulatedSpectrum()
-    simu.plot()
-    plt.savefig("fig.jpg")

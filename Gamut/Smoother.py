@@ -48,7 +48,7 @@ class CentroidSmoother(Operator):
 
 class SavitzkySmoother(Operator):
 
-    def __init__(self, order: int = 2, hwidth: int = 3, label: str = None):
+    def __init__(self, order: int = 3, hwidth: int = 6, label: str = None):
         '''
         The most widely used smoother, applied in commercial codes, such as GammaVision & Genie2000
         Reference:
@@ -113,58 +113,87 @@ class FourierSmoother(Operator):
         if self._mode == 'low':
             denoised = transformed.copy()
             denoised[int(self._threshold*transformed.shape[0]):
-                  int((1-self._threshold)*transformed.shape[0])] = 0
+                     int((1-self._threshold)*transformed.shape[0])] = 0
         return denoised
 
 
 class WaveletSmoother(Operator):
-    def __init__(self, wavelet: Literal[""], mode: Literal[""], order: int = 3):
+    def __init__(self, wavelet: str | Literal["harr", "db1", "sym1", "coif1", "gaus1"] = 'sym3',
+                 mode: Literal["hard", "soft", "soft-quadratic"] = 'hard',
+                 threshold_mode: Literal["visushrink", "sqtwolog", "minimax"] = "visushrink", order: int = 4, label: str = None):
         self._wavelet = wavelet
         self._mode = mode
         self._order = order
+        self._threshold_mode = threshold_mode
         if label is None:
             label = f'WaveletSmoother[O{self._order}]'
         super().__init__(1, label)
 
+    def _shannon_entropy(self, transformed: list[np.ndarray]):
+        SE_cA = - (transformed[0]**2 * np.log(transformed[0]**2)).sum()
+        SE_cD = - (transformed[1]**2 * np.log(transformed[1]**2)).sum()
+        return SE_cA, SE_cD
+
     def __run__(self, spectra: Spectrum | list[Spectrum], *args, **kargs) -> Spectrum:
         smoothed = spectra[0].copy()
-        transformed = wavedec(spectra[0], wavelet=self._wavelet, level=self._order)
-        transformed = self._denoise(transformed)
-        smoothed[:] = np.real(waverec(transformed, wavelet=self._wavelet))
+        padded = np.pad(smoothed, pad_width=(10, 10), mode='edge')
+        transformed = wavedec(padded, wavelet=self._wavelet, level=self._order)
+        transformed = self._denoise(transformed, padded)
+        smoothed[:] = np.real(waverec(transformed, wavelet=self._wavelet))[10: -10]
         return smoothed
 
-    def _denoise(self, transformed: np.ndarray) -> np.ndarray:
-        sigma = np.median(np.abs(transformed[-1]))
+    def _denoise(self, transformed: np.ndarray, smoothed: Spectrum) -> np.ndarray:
+
         denoised = transformed.copy()
-        if self._mode == 'soft':
-            thershold = sigma * np.sqrt(2 * np.log(transformed.shape[0]))
-            for item in denoised[-2:]:
-                item[abs(item) < thershold] = 0
-                item[item > thershold] -= thershold
-                item[item < -thershold] += thershold
+        sigma = np.median(np.abs(np.concatenate(transformed[1:]))) / 0.6745
+        if self._threshold_mode == 'visushrink':
+            threshold = sigma * (2 * np.log2(smoothed.shape[0])) ** 0.5
+        elif self._threshold_mode == 'sqtwolog':
+            threshold = (2 * np.log2(transformed.shape[0])) ** 0.5
+        elif self._threshold_mode == 'minimax':
+            threshold = 0.3936 + 0.1829 * np.log2(transformed.shape[0]) if transformed.shape[0] > 32 else 0.0
+            threshold = sigma * threshold
+        elif self._threshold_mode == 'rigrsure':
+            pass
+        else:
+            raise ValueError(f'Unknown threshold mode: {self._threshold_mode}')
+
+        if self._mode == 'hard':
+            for item in denoised[1:]:
+                item[np.abs(item) < threshold] = 0
+        elif self._mode == 'soft':
+            for item in denoised[1:]:
+                item[np.abs(item) < threshold] = 0
+                indexes = np.abs(item) >= threshold
+                item[indexes] = np.sign(item[indexes]) * np.maximum(np.abs(item[indexes]) - threshold, 0)
+        elif self._mode == 'soft-quadratic':
+            for item in denoised[1:]:
+                item[abs(item) < threshold] = 0
+                indexes = np.abs(item) >= threshold
+                item[indexes] = np.sign(item[indexes]) * (item[indexes]**2 - threshold**2)**0.5
+        else:
+            raise ValueError(f'Unknown denoising mode: {self._mode}')
         return denoised
 
 
 class TranslationInvarianceWaveletSmoother(WaveletSmoother):
 
-    def __init__(self, wavelet: Literal[""], mode: Literal[""], step: int = 1, order: int = 3):
-        
+    def __init__(self, wavelet: str | Literal["harr", "db2", "sym3", "gaus1"] = 'sym3',
+                 mode: Literal["hard", "soft", "soft-quadratic"] = 'soft',
+                 threshold_mode: Literal["visushrink", "sqtwolog", "minimax"] = "visushrink", step: int = 4, order: int = 8, label: str = None):
         self._step = step
         if label is None:
-            label = f'TIWaveletSmoother[O{self._order}]'
-        super().__init__(wavelet, mode, order)
+            label = f'TIWaveletSmoother[O{order}]'
+        super().__init__(wavelet, mode, threshold_mode=threshold_mode, order=order, label=label)
 
     def __run__(self, spectra: Spectrum | list[Spectrum], *args, **kargs) -> Spectrum:
         smoothed = spectra[0].copy()
-        self._wavelet_smoother = WaveletSmoother(self._wavelet, self._mode, self._order)
-        transformed_sum = np.zeros(spectrum.shape)
-        times = spectra[0].shape[0] // self._step
-        for i in range(times):
-            translated = Spectrum(np.roll(spectrum, self._step * i))
-            transformed = self._wavelet_smoother(translated)
-            transformed_sum += np.roll(transformed, -self._step * i)
-        smoothed[:] = transformed_sum / times
-        smoothed.label += self._label
+        transformed_sum = np.zeros(smoothed.shape)
+        for i in range(-self._step, self._step+1):
+            translated = Spectrum(np.roll(spectra[0], i))
+            transformed = super().__run__([translated])
+            transformed_sum += np.roll(transformed, -i)
+        smoothed[:] = transformed_sum / (2*self._step+1)
         return smoothed
 
 

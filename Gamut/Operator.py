@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 
 from typing import Union, Callable
@@ -44,8 +43,9 @@ class Operator(ABC):
         if self.inp_num and len(spectra) != self.inp_num:
             raise TypeError(f'Input must be a list of length {self.inp_num}.')
         spectrum = self.__run__(spectra, *args, **kargs)
+        spectrum[:] = np.maximum(spectrum, 0)
         if add_label:
-            spectrum.label += ">>" + self._label
+            spectrum.label += "|" + self._label
         return spectrum
 
     @abstractmethod
@@ -99,7 +99,7 @@ class Pipe:
 
     def __call__(self, spectra: list[Spectrum]) -> Spectrum:
 
-        if isinstance(spectra, Spectrum) and self.inp_num == 1: 
+        if isinstance(spectra, Spectrum) and self.inp_num == 1:
             spectra = [spectra]
         if not all([isinstance(spectrum, Spectrum) for spectrum in spectra]):
             raise TypeError('Input must be a list of Spectrum object.')
@@ -129,6 +129,7 @@ class Pipe:
 
     def get_spectrum(self, index):
         return self._spectra[index]
+
 
 class Node:
 
@@ -217,7 +218,7 @@ class PipeNet:
         """
         Run the PipeNet.
         """
-        node = [node for node in self._nodes if node.id == 0][0] # insert the input spectra into initial node
+        node = [node for node in self._nodes if node.id == 0][0]  # insert the input spectra into initial node
         if len(node.spectra) != len(spectra):
             raise ValueError(f"Input spectra' length {len(spectra)}  is not the same as Node 0's input length {len(node.spectra)}.")
         node.spectra = spectra
@@ -279,6 +280,7 @@ class PipeNet:
 
     def get_node(self, nid):
         return [node for node in self._nodes if node.id == nid][0]
+
 
 if __name__ == "__main__":
 
