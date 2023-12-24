@@ -141,4 +141,3 @@ class Nuclide():
 #             list_nuc.append(nuc)
 #         index += subindex
 
-#     return list_nuc

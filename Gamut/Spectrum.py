@@ -21,7 +21,8 @@ class Spectrum(np.ndarray):
     3. Contains three main sub-objects: regions, ergcal, and FWHMcal. Attrs to store other data.
     """
     def __new__(cls, counts: np.ndarray, *args, **kargs):
-        self = np.asarray(counts).view(cls)
+        self = np.asarray(counts, dtype=np.float32).view(cls)
+        self._covariance_propagation_vector = np.array([1], dtype=np.float32)
         return self
 
     def __array_finalize__(self, obj):
@@ -31,6 +32,7 @@ class Spectrum(np.ndarray):
         self._regions = deepcopy(getattr(obj, '_regions', []))
         self._ergcal = deepcopy(getattr(obj, '_ergcal', Calibration()))
         self._FWHMcal = deepcopy(getattr(obj, '_FWHMcal', Calibration()))
+        self._covariance_propagation_vector = deepcopy(getattr(obj, '_covariance_propagation_vector', np.array([1], dtype=np.float32)))
         self._attrs = deepcopy(getattr(obj, '_attrs', None))
 
     def __init__(self, counts: list | np.ndarray, label: str = None,
@@ -137,6 +139,24 @@ class Spectrum(np.ndarray):
     def FWHMcal(self, FWHMcal):
         self._FWHMcal = FWHMcal
 
+    @property
+    def covariance_propagation_vector(self):
+        return self._covariance_propagation_vector
+
+    def propagate_covariance(self, covariance_propagation_vector):
+        self._covariance_propagation_vector = np.convolve(covariance_propagation_vector, self.covariance_propagation_vector)
+
+    def covariance(self, region: Region):
+        propagation_hwidth = (self._covariance_propagation_vector.shape[0] - 1) // 2  # construct the propagation matrix using stride trick
+        zero_pad = np.zeros(region.length - 1, dtype=self.covariance_propagation_vector.dtype)
+        row_templet = np.concatenate((zero_pad, self.covariance_propagation_vector, zero_pad))
+        stride = row_templet.strides[0]
+        covariance_propagation_matrix = np.lib.stride_tricks.as_strided(row_templet[region.length - 1:], shape=(region.length, region.length + 2*propagation_hwidth), strides=(-stride, stride))
+        left_width, right_width = min(region.left, propagation_hwidth), min(self.length - region.right - 1, propagation_hwidth)
+        unpropagated_covariance = np.diag(self[region.left - left_width: region.right + right_width + 1])  # construct the unpropagated covariance matrix
+        unpropagated_covariance = np.pad(unpropagated_covariance, (propagation_hwidth - left_width, propagation_hwidth - right_width), mode='edge')
+        return np.einsum('ik,kg,jg->ij', covariance_propagation_matrix, unpropagated_covariance, covariance_propagation_matrix)
+
     def copy(self):
         return deepcopy(self)
 
@@ -175,7 +195,7 @@ class Spectrum(np.ndarray):
         if axes is None:
             axes = plt.gca()
         for i, region in enumerate(self.regions):
-            axes.plot(self.ergcal(region.indexes), self[region.indexes], *args, **kargs, color=colors(i), linewidth=2, alpha=0.8)
+            axes.plot(self.ergcal(region.indexes), self[region.indexes], *args, **kargs, color=colors(i), linewidth=1, alpha=0.8)
             for peak in region.peaks:
                 axes.plot(self.ergcal(peak['location']), self[peak['location']], *args, **kargs, color=colors(i), marker='*', markersize=8)
         return axes
@@ -197,13 +217,14 @@ class Spectrum(np.ndarray):
         if axes is None:
             axes = plt.gca()
         for region in self.regions:
-            if self.fitness_estimate(region) > 0.5:
+            if self.fitness_estimate(region) > 0.1:
                 fitted_baseline = region.fit_baseline()
                 baseline[region.indexes] += fitted_baseline
                 fitted_spectrum[region.indexes] += fitted_baseline
                 for peak in region.peaks:
                     if 'stderr' in peak.keys():
-                        fitted_indexes = np.arange(max(int(peak['center']-4*peak['stderr']), 0), min(int(peak['center']+4*peak['stderr']), self.length-1))
+                        # fitted_indexes = np.arange(max(int(peak['center']-4*peak['stderr']), 0), min(int(peak['center']+4*peak['stderr']), self.length-1))
+                        fitted_indexes = region.indexes
                         fitted_peak = region.fit_peak(peak, fitted_indexes)
                         axes.fill_between(self.ergcal(fitted_indexes), baseline[fitted_indexes], baseline[fitted_indexes] + fitted_peak, alpha=0.5)
                         fitted_spectrum[fitted_indexes] += fitted_peak
@@ -380,10 +401,10 @@ class SimulatedSpectrum(Spectrum):
         return self
 
     def __init__(self,
-                 length: int = 200,
-                 peaks_info: list = [[30, 2.5, 4000], [70, 3, 2000], [110, 4, 1000],  [150, 4.5, 2400], [165, 4.3, 1600]],
-                 base_intensity: int = 100,
-                 base_amplitude: int = 100,
+                 length: int = 100,
+                 peaks_info: list = [[50, 3, 2000]],
+                 base_intensity: int = 0,
+                 base_amplitude: int = 0,
                  base_function: Callable = lambda x: x,
                  random_seed: int = 0,
                  label: str = None,
@@ -445,8 +466,8 @@ simuspecs = {
                                                                     [110, 2.83, 1500], [117, 2.87, 500], [126, 2.90, 2000],
                                                                     [150, 3.07, 2400], [165, 3.16, 1600],
                                                                     [230, 3.56, 4000], [275, 3.83, 2000], [290, 3.93, 2500], [305, 4.02, 1500],
-                                                                    [310, 4.04, 1500], [317, 4.1, 500], [344, 4.22, 2000], [374, 4.40, 2000], [386, 4.50, 2000],
-                                                                    [450, 4.91, 2400], [465, 5.01, 1600]]},
+                                                                    [310, 4.04, 1500], [317, 4.1, 500], [344, 4.22, 2000], [364, 4.40, 2000], [386, 4.50, 2000],
+                                                                    [450, 4.91, 2400], [470, 5.01, 1600]]},
     'single_peaks': {'base_intensity': 100, 'base_amplitude': 100, 'label': 'synthesized_singlets', 'length': 500,  # with FWHM cal: 2+0.03*(E+0.05*E**2)**0.5
                      'base_function': lambda x:  x, 'peaks_info': [[110, 2.95, 2000], [130, 3, 2000], [180, 3.41, 4000], [230, 3.75, 1500],
                                                                    [285, 4.14, 2500], [335, 4.4, 2500], [375, 4.7, 1000],
@@ -460,3 +481,5 @@ simuspecs = {
                                                                           [285, 4.14, 10000], [335, 4.4, 10000], [375, 4.7, 5000],
                                                                           [410, 4.95, 7800], [450, 5.2, 6200]]}
 }
+
+

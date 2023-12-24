@@ -317,7 +317,6 @@ if __name__ == "__main__":
     net({0: spectrum})
 
     # Print spectra
-    for node in net._nodes:
-        print(node)
-        for spectrum in node._spectra.values():
-            print(repr(spectrum))
+    # for node in net._nodes:
+    #     print(node)
+    #     for spectrum in node._spectra.values():

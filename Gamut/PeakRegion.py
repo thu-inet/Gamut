@@ -70,15 +70,14 @@ class Calibration:
         return a + b * (inp + c * inp**2) ** 0.5
 
     def _curvefit(self) -> list[float]:
-        match self._method:
-            case 'linear':
-                func = self._linear
-            case 'quadratic':
-                func = self._quadratic
-            case 'FWHMcal':
-                func = self._FWHMcal
-            case _:
-                raise ValueError(f'Unknown curvefit method: {self._method}')
+        if self._method == 'linear':
+            func = self._linear
+        elif self._method == 'quadratic':
+            func = self._quadratic
+        elif self._method == 'FWHMcal':
+            func = self._FWHMcal
+        else:
+            raise ValueError(f'Unknown curvefit method: {self._method}')
         params, _ = curve_fit(func, xdata=self._data[0, :], ydata=self._data[1, :])
         fitted = func(self._data[0, :], *params)
         fitness = 1 - ((fitted - self._data[1, :])**2).sum() / ((self._data[1, :] - self.data[1, :].mean())**2).sum()

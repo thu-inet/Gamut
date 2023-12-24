@@ -29,3 +29,4 @@ def markers(i: int):
 
 def colors(i: int):
     return _colors[i % len(_colors)]
+
