@@ -1,8 +1,0 @@
-<?xml version="1.0" ?>
-<spectrum name="S1">
-	<peaks encoding="32">
-		<peak index="1"/>
-		<peak index="2"/>
-		<peak index="3"/>
-	</peaks>
-</spectrum>
