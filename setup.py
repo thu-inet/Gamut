@@ -11,7 +11,7 @@ with open("README.md", "r") as fileopen:
     long_description = fileopen.read()
 
 setuptools.setup(
-    name="Gamut",
+    name="gamspec",
     version="0.1.1",
     author="THU-RSAG",
     author_email="z-wj21@mails.tsinghua.edu.cn",
