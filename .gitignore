@@ -11,3 +11,9 @@ gamspec/__pycache__/
 
 *.png
 *.xml
+*.xlsx
+*.mmd
+*.Spe
+
+
+spectrum_analysis/
