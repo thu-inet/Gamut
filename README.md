@@ -1,4 +1,5 @@
-![Gamut_logo](https://github.com/Albert-Zhangweijian/Gamut/assets/91001624/eff31c24-9b49-432c-a77a-5d53a189aff3)
+![Gamut_logo](https://github.com/Albert-Zhangweijian/Gamut/assets/91001624/e2761a4f-241f-4d89-9027-abee62987255)
+
 # GAMUT
 ## Introduction
 

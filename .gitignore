@@ -2,6 +2,7 @@ __pycache__/
 .vscode/
 
 older_files/
+files/
 tests/
 build/
 dist/
@@ -17,5 +18,3 @@ gamspec/__pycache__/
 *.ipynb
 
 spectrum_analysis/
-
-inp
