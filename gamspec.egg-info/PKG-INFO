@@ -1,0 +1,35 @@
+Metadata-Version: 2.1
+Name: gamspec
+Version: 0.1.1
+Summary: Gamut is a Python package for the analysis of 1-d gamma spectrum.
+Home-page: https://github.com/thu-inet/Gamut
+Author: THU-RSAG
+Author-email: z-wj21@mails.tsinghua.edu.cn
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+![Gamut_logo](https://github.com/Albert-Zhangweijian/Gamut/assets/91001624/eff31c24-9b49-432c-a77a-5d53a189aff3)
+# Gamut
+Gamut (GAMma Utils) is a python-based gamma spectrum analysis program.
+
+Submodules:
+-PeakRegion: basic objects, including: `Region`, `Calibration`.
+-Spectrum: `Spectrum`, `SimulatedSpectrum` and `simuspecs`.
+-Operator: `Operator`, `Pipe`, `Node`, `Flow` and `PipiNet` objects.
+
+-operators:
+    - Smoother
+    - PeakSearcher
+    - AreaCalculator
+    - OtherOpeartor
+    - BasicOperator
+
+
+
+
