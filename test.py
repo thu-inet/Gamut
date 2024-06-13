@@ -5,7 +5,7 @@ Description:
 
 Copyright (c) 2024 by THU-RSAG, All Rights Reserved. 
 '''
-import gamspec
+import gamut as gamspec
 import matplotlib.pyplot as plt
 
 spec = gamspec.Spectrum.from_xml(r'E:\Gamut_dev\模拟谱MixEu000mm_拟合法报告.xml')
