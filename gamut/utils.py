@@ -1,9 +1,11 @@
-# from .Spectrum import Spectrum
-# from .Operator import Operator
 import numpy as np
 from scipy.optimize import curve_fit
 from re import match
 
+
+def gaussian(indexes: np.ndarray, mean: float, std: float) -> np.ndarray:
+    return np.exp(-(indexes - mean) ** 2 / (2 * std ** 2))
+    
 def padconvol(signal, kernel):
     padded = np.pad(signal, (kernel.shape[0]-1, kernel.shape[0]-1), 'reflect')
     convol = np.convolve(padded, kernel, mode='same')[kernel.shape[0]-1:-kernel.shape[0]+1]
@@ -31,39 +33,39 @@ def padconvol(signal, kernel):
 
 
 def Differential(counts, order=2, half_width=3, derive_order=1):
-    '''
-    Numerical differential peak-searching method based on Savitzy-Colay fitting method.
-    Equation:
-        Ab + E = y
-        -b = [b0, b1, ..., bi,..., bn], fitted polynomial
-        -A = [[1   m     m^2    ,...,       m^n]
-              [1  m-1  (m-1)^2  ,...,   (m-1)^n]
-              [1   i     i^2    ,...,       i^n]
-              [1  -m   (-m)^2   ,...,    (-m)^n]], index for fitted polynomial
-        -y = [y(m), y(m-1),..., y(0),..., y(-m)], windowed spectrum
-        -m = half_width of transformation window
-        -n = order of fitted polynomial
-        -bi = polynomial coefficients
-    Solution:
-        -b = (A.t*A).I * A.t * y
-        -y(fitted) = Ab = A * (A.t*A).I *A.t * y = A * M * y
-        -y(0)(kth derivative)(fitted)
-            = y(0)(fitted)(kth derivative)
-            = ( b0 + b1 * m + ... + bn * m^n )(kth derivative)|(m=0)
-            = k! * bk + (k+1)!/1! * b(k+1) * m + ... + n!/(n-k)! * bn * m^(n-k)|(m=0)
-            = k! * bk
-            = K! * (M * y)[kth element]
-            = k! * (M * y)[k]
-        * M = (A.t*A).I *A.t, b = M * y
+    # '''
+    # Numerical differential peak-searching method based on Savitzy-Colay fitting method.
+    # Equation:
+    #     Ab + E = y
+    #     -b = [b0, b1, ..., bi,..., bn], fitted polynomial
+    #     -A = [[1   m     m^2    ,...,       m^n]
+    #           [1  m-1  (m-1)^2  ,...,   (m-1)^n]
+    #           [1   i     i^2    ,...,       i^n]
+    #           [1  -m   (-m)^2   ,...,    (-m)^n]], index for fitted polynomial
+    #     -y = [y(m), y(m-1),..., y(0),..., y(-m)], windowed spectrum
+    #     -m = half_width of transformation window
+    #     -n = order of fitted polynomial
+    #     -bi = polynomial coefficients
+    # Solution:
+    #     -b = (A.t*A).I * A.t * y
+    #     -y(fitted) = Ab = A * (A.t*A).I *A.t * y = A * M * y
+    #     -y(0)(kth derivative)(fitted)
+    #         = y(0)(fitted)(kth derivative)
+    #         = ( b0 + b1 * m + ... + bn * m^n )(kth derivative)|(m=0)
+    #         = k! * bk + (k+1)!/1! * b(k+1) * m + ... + n!/(n-k)! * bn * m^(n-k)|(m=0)
+    #         = k! * bk
+    #         = K! * (M * y)[kth element]
+    #         = k! * (M * y)[k]
+    #     * M = (A.t*A).I *A.t, b = M * y
 
-    :param counts: spectrum counts
-    :param order[2]: polymonial order of target fitted function
-    :param half_width[3]: halfwidth of transform window
-    :param derive_order[1]: derivative order of numerical differential
+    # :param counts: spectrum counts
+    # :param order[2]: polymonial order of target fitted function
+    # :param half_width[3]: halfwidth of transform window
+    # :param derive_order[1]: derivative order of numerical differential
 
-    :return diff: target numerical differential
-    :return coefs: coefficient vector of transform
-    '''
+    # :return diff: target numerical differential
+    # :return coefs: coefficient vector of transform
+    # '''
     mat_order, mat_width = np.meshgrid(np.arange(order+1), np.arange(-half_width, half_width+1))
     A = mat_width ** mat_order
     M = np.matmul( np.linalg.inv(np.matmul(A.T, A)), A.T )
@@ -77,7 +79,6 @@ def Differential(counts, order=2, half_width=3, derive_order=1):
             diff[i] = np.matmul( M, counts[i-half_width: i+half_width+1] )[derive_order] * derive_order
         coefs = M[derive_order] * derive_order
     return diff, coefs
-
 
 class Nuclide():
 

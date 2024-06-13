@@ -1,15 +1,8 @@
-'''
-Author: albertzhang albert.zhangweij@outlook.com
-Date: 2023-12-25 10:20:01
-Description: 
-
-Copyright (c) 2023 by THU-RSAG, All Rights Reserved. 
-'''
 import numpy as np
 
 from typing import Callable, Literal
-from ..Spectrum import Spectrum
-from ..Operator import Operator
+from ..spectrum.Spectrum import Spectrum
+from .Operator import Operator
 
 
 class Passer(Operator):
@@ -23,7 +16,7 @@ class Passer(Operator):
 
 class Stripper(Operator):
     """
-    Strip the second spectrum from first spsectrum, and limit the minimun to be zero.
+    Strip the second spectrum from first spectrum, and limit the minimum to be a certain value.
     """
     def __init__(self, min: int = 0):
         self._min = min

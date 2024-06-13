@@ -1,14 +1,15 @@
 import numpy as np
 
-from typing import Union, Callable
 from collections import namedtuple
 from abc import ABC, abstractmethod
 
-from .Spectrum import Spectrum
+from ..spectrum.Spectrum import Spectrum
 
 
 class Operator(ABC):
-
+    """
+    Operator is the basic class in GAMUT to wrap all spectrum analysis algorithms.    
+    """
     def __init__(self, inp_num: int | None, label: str | None = None):
         self._inp_num = inp_num
         if label is None:
@@ -58,6 +59,7 @@ class Operator(ABC):
 
     def __dbg__(self, spectrum: Spectrum) -> Spectrum:
         pass
+
 
 class Pipe(Operator):
 

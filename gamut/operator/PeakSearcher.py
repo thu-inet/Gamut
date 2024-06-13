@@ -5,10 +5,10 @@ from multiprocessing import Pool
 from scipy.signal import argrelextrema
 
 from ..utils import Differential
-from ..PeakRegion import Region
+from ..classes import Region
 
-from ..Operator import Operator
-from ..Spectrum import Spectrum
+from .Operator import Operator
+from ..spectrum.Spectrum import Spectrum
 from .Smoother import CentroidSmoother
 
 class PeakSearcher(Operator):

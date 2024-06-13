@@ -4,9 +4,9 @@ from copy import deepcopy
 from time import strftime, ctime
 from typing import Literal, Callable
 
-from ..Spectrum import Spectrum
-from ..Operator import Operator
-from ..PeakRegion import Region
+from ..spectrum.Spectrum import Spectrum
+from .Operator import Operator
+from ..classes import Region
 
 
 class AverageAreaCalculator(Operator):

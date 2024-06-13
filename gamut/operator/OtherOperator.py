@@ -1,9 +1,8 @@
 import numpy as np
 
-from ..Spectrum import Spectrum
-from ..Operator import Operator
-from ..PeakRegion import Calibration
-
+from ..spectrum.Spectrum import Spectrum
+from .Operator import Operator
+from ..classes import Calibration
 
 class SNIPStripper(Operator):
     """"

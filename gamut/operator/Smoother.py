@@ -5,8 +5,8 @@ from typing import Literal
 from numpy.fft import fft, ifft
 from pywt import wavedec, waverec
 
-from ..Operator import Operator
-from ..Spectrum import Spectrum
+from .Operator import Operator
+from ..spectrum.Spectrum import Spectrum
 
 
 class CentroidSmoother(Operator):
@@ -208,7 +208,7 @@ class TranslationInvarianceWaveletSmoother(WaveletSmoother):
 if __name__ == "__main__":
 
     import matplotlib.pyplot as plt
-    from Spectrum import SimulatedSpectrum
+    from spectrum.Spectrum import SimulatedSpectrum
 
     spectrum = SimulatedSpectrum()
 
