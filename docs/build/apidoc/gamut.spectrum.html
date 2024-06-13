@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamut.spectrum package &mdash; GAMUT 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=e259d695"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="gamut.test package" href="gamut.test.html" />
+    <link rel="prev" title="gamut.operator package" href="gamut.operator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GAMUT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dependencies.html">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../classes_and_algorithms.html">Classes and Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/index.html">User Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/index.html">Theory Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License Agreement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GAMUT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Reference</a></li>
+      <li class="breadcrumb-item active">gamut.spectrum package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/apidoc/gamut.spectrum.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gamut-spectrum-package">
+<h1>gamut.spectrum package<a class="headerlink" href="#gamut-spectrum-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-gamut.spectrum.Spectrum">
+<span id="gamut-spectrum-spectrum-module"></span><h2>gamut.spectrum.Spectrum module<a class="headerlink" href="#module-gamut.spectrum.Spectrum" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.spectrum.Spectrum.Spectrum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.spectrum.Spectrum.</span></span><span class="sig-name descname"><span class="pre">Spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">counts</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/spectrum/Spectrum.html#Spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.Spectrum.Spectrum" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+<p>Spetrum is the most basic object of GAMUT. It is used to store data of a gamma spectrum.
+It is a view of 1-d numpy.ndarray.</p>
+<p>Initialize the spectrum object with the given counts and optional parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>counts</strong> – The channel-wise counts of the spectrum</p></li>
+<li><p><strong>label</strong> – Optional, the name or label of the spectrum</p></li>
+<li><p><strong>regions</strong> – Optional, the list of ROIs of the spectrum</p></li>
+<li><p><strong>attrs</strong> – Optional, the dictionary of trivial attributes of the spectrum</p></li>
+<li><p><strong>ergcal</strong> – Optional, the energy calibration of the spectrum</p></li>
+<li><p><strong>FWHMcal</strong> – Optional, the FWHM calibration of the spectrum</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.spectrum.Spectrum.Spectrum.label">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">label</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#gamut.spectrum.Spectrum.Spectrum.label" title="Link to this definition"></a></dt>
+<dd><p>The name or label of the spectrum.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.spectrum.Spectrum.Spectrum.regions">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">regions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="gamut.classes.html#gamut.classes.Region.Region" title="gamut.classes.Region.Region"><span class="pre">Region</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gamut.spectrum.Spectrum.Spectrum.regions" title="Link to this definition"></a></dt>
+<dd><p>The list of ROIs in the spectrum.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.spectrum.Spectrum.Spectrum.attrs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attrs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#gamut.spectrum.Spectrum.Spectrum.attrs" title="Link to this definition"></a></dt>
+<dd><p>The dictionary of trivial attributes of the spectrum.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.spectrum.Spectrum.Spectrum.ergcal">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ergcal</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="gamut.classes.html#gamut.classes.Calibration.Calibration" title="gamut.classes.Calibration.Calibration"><span class="pre">Calibration</span></a></em><a class="headerlink" href="#gamut.spectrum.Spectrum.Spectrum.ergcal" title="Link to this definition"></a></dt>
+<dd><p>The energy calibration of the spectrum.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.spectrum.Spectrum.Spectrum.FWHMcal">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FWHMcal</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="gamut.classes.html#gamut.classes.Calibration.Calibration" title="gamut.classes.Calibration.Calibration"><span class="pre">Calibration</span></a></em><a class="headerlink" href="#gamut.spectrum.Spectrum.Spectrum.FWHMcal" title="Link to this definition"></a></dt>
+<dd><p>The FWHM calibration of the spectrum.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.spectrum.Spectrum.Spectrum.length">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">length</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#gamut.spectrum.Spectrum.Spectrum.length" title="Link to this definition"></a></dt>
+<dd><p>The length of the spectrum.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.spectrum.Spectrum.Spectrum.indexes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">indexes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#gamut.spectrum.Spectrum.Spectrum.indexes" title="Link to this definition"></a></dt>
+<dd><p>The indexes of the spectrum.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.spectrum.Spectrum.Spectrum.energies">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">energies</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#gamut.spectrum.Spectrum.Spectrum.energies" title="Link to this definition"></a></dt>
+<dd><p>The energies of the spectrum. Available only when the spectrum is calibrated.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.spectrum.Spectrum.Spectrum.counts">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">counts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#gamut.spectrum.Spectrum.Spectrum.counts" title="Link to this definition"></a></dt>
+<dd><p>The channel-wise counts of the spectrum.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.spectrum.Spectrum.Spectrum.nregions">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nregions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#gamut.spectrum.Spectrum.Spectrum.nregions" title="Link to this definition"></a></dt>
+<dd><p>The number of regions in the spectrum.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.spectrum.Spectrum.Spectrum.npeaks">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">npeaks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#gamut.spectrum.Spectrum.Spectrum.npeaks" title="Link to this definition"></a></dt>
+<dd><p>The number of peaks in the spectrum.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.spectrum.Spectrum.Spectrum.peaks">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">peaks</span></span><a class="headerlink" href="#gamut.spectrum.Spectrum.Spectrum.peaks" title="Link to this definition"></a></dt>
+<dd><p>The list of peaks in the spectrum. It retuns a copy of the peaks.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.Spectrum.Spectrum.from_GammaVision">
+<span class="sig-name descname"><span class="pre">from_GammaVision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/spectrum/Spectrum.html#Spectrum.from_GammaVision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.Spectrum.Spectrum.from_GammaVision" title="Link to this definition"></a></dt>
+<dd><p>Import the spectrum from a GammaVision file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> – The path to the GammaVision file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.Spectrum.Spectrum.from_excel">
+<span class="sig-name descname"><span class="pre">from_excel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counts_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/spectrum/Spectrum.html#Spectrum.from_excel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.Spectrum.Spectrum.from_excel" title="Link to this definition"></a></dt>
+<dd><p>Import the spectrum from columns of excel files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> – The path to the excel file.</p></li>
+<li><p><strong>counts_column</strong> – The name of the column containing the counts.</p></li>
+<li><p><strong>energy_column</strong> – The name of the column containing the energies.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamut.spectrum.SpectrumExporter">
+<span id="gamut-spectrum-spectrumexporter-module"></span><h2>gamut.spectrum.SpectrumExporter module<a class="headerlink" href="#module-gamut.spectrum.SpectrumExporter" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumExporter.SpectrumExporter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.spectrum.SpectrumExporter.</span></span><span class="sig-name descname"><span class="pre">SpectrumExporter</span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumExporter.html#SpectrumExporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumExporter.SpectrumExporter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumExporter.SpectrumExporter.export_to_pickle">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">export_to_pickle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumExporter.html#SpectrumExporter.export_to_pickle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumExporter.SpectrumExporter.export_to_pickle" title="Link to this definition"></a></dt>
+<dd><p>Export to binary pickle file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spectrum</strong> – Spectrum object to be exported.</p></li>
+<li><p><strong>filename</strong> – Path to the file where the spectrum will be saved.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumExporter.SpectrumExporter.export_to_GammaVision">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">export_to_GammaVision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumExporter.html#SpectrumExporter.export_to_GammaVision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumExporter.SpectrumExporter.export_to_GammaVision" title="Link to this definition"></a></dt>
+<dd><p>Export to Ortec plain text file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spectrum</strong> – Spectrum object to be exported.</p></li>
+<li><p><strong>filename</strong> – Path to the file where the spectrum will be saved.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumExporter.SpectrumExporter.export_to_pandas">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">export_to_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumExporter.html#SpectrumExporter.export_to_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumExporter.SpectrumExporter.export_to_pandas" title="Link to this definition"></a></dt>
+<dd><p>Export to excel file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>spectrum</strong> – Spectrum object to be exported.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame with the ROIs data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumExporter.SpectrumExporter.export_to_xml">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">export_to_xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'FWHMcal':</span> <span class="pre">True,</span> <span class="pre">'FWHMcal.verbose':</span> <span class="pre">False,</span> <span class="pre">'ergcal':</span> <span class="pre">True,</span> <span class="pre">'ergcal.verbose':</span> <span class="pre">False,</span> <span class="pre">'regions':</span> <span class="pre">True,</span> <span class="pre">'regions.peaks':</span> <span class="pre">True,</span> <span class="pre">'regions.peaks.verbose':</span> <span class="pre">False,</span> <span class="pre">'regions.verbose':</span> <span class="pre">False}</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumExporter.html#SpectrumExporter.export_to_xml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumExporter.SpectrumExporter.export_to_xml" title="Link to this definition"></a></dt>
+<dd><p>Export the report to a xml file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spectrum</strong> – Spectrum object to be exported.</p></li>
+<li><p><strong>filename</strong> – Path to the file where the spectrum will be saved.</p></li>
+<li><p><strong>data</strong> – Dictionary indicating which data will be included in the report.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamut.spectrum.SpectrumImporter">
+<span id="gamut-spectrum-spectrumimporter-module"></span><h2>gamut.spectrum.SpectrumImporter module<a class="headerlink" href="#module-gamut.spectrum.SpectrumImporter" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumImporter.SpectrumImporter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.spectrum.SpectrumImporter.</span></span><span class="sig-name descname"><span class="pre">SpectrumImporter</span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumImporter.html#SpectrumImporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumImporter.SpectrumImporter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumImporter.SpectrumImporter.from_pickle">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_pickle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamut.spectrum.Spectrum.Spectrum" title="gamut.spectrum.Spectrum.Spectrum"><span class="pre">Spectrum</span></a></span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumImporter.html#SpectrumImporter.from_pickle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumImporter.SpectrumImporter.from_pickle" title="Link to this definition"></a></dt>
+<dd><p>Import spectrum from pickle files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> – Path to the file where the spectrum is saved.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Spectrum object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumImporter.SpectrumImporter.from_excel">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_excel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counts_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamut.spectrum.Spectrum.Spectrum" title="gamut.spectrum.Spectrum.Spectrum"><span class="pre">Spectrum</span></a></span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumImporter.html#SpectrumImporter.from_excel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumImporter.SpectrumImporter.from_excel" title="Link to this definition"></a></dt>
+<dd><p>Import spectrum from columns of excel files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> – Path to the file where the spectrum is saved.</p></li>
+<li><p><strong>counts_column</strong> – The name of the column containing the counts.</p></li>
+<li><p><strong>energy_column</strong> – The name of the column containing the energies.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Spectrum object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumImporter.SpectrumImporter.from_xml">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamut.spectrum.Spectrum.Spectrum" title="gamut.spectrum.Spectrum.Spectrum"><span class="pre">Spectrum</span></a></span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumImporter.html#SpectrumImporter.from_xml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumImporter.SpectrumImporter.from_xml" title="Link to this definition"></a></dt>
+<dd><p>Import spectrum from xml files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> – Path to the file where the spectrum is saved.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Spectrum object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumImporter.SpectrumImporter.from_MCNP">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_MCNP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tally_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamut.spectrum.Spectrum.Spectrum" title="gamut.spectrum.Spectrum.Spectrum"><span class="pre">Spectrum</span></a></span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumImporter.html#SpectrumImporter.from_MCNP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumImporter.SpectrumImporter.from_MCNP" title="Link to this definition"></a></dt>
+<dd><p>Import spectrum from MCNP output files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filepath</strong> – Path to the file where the spectrum is saved.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Spectrum object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumImporter.SpectrumImporter.from_GammaVision">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_GammaVision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamut.spectrum.Spectrum.Spectrum" title="gamut.spectrum.Spectrum.Spectrum"><span class="pre">Spectrum</span></a></span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumImporter.html#SpectrumImporter.from_GammaVision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumImporter.SpectrumImporter.from_GammaVision" title="Link to this definition"></a></dt>
+<dd><p>Import spectrum from Ortec .chn or .spe ASCII plain text file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> – Path to the file where the spectrum is saved.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Spectrum object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamut.spectrum.SpectrumPlotter">
+<span id="gamut-spectrum-spectrumplotter-module"></span><h2>gamut.spectrum.SpectrumPlotter module<a class="headerlink" href="#module-gamut.spectrum.SpectrumPlotter" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumPlotter.SpectrumPlotter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.spectrum.SpectrumPlotter.</span></span><span class="sig-name descname"><span class="pre">SpectrumPlotter</span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumPlotter.html#SpectrumPlotter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumPlotter.SpectrumPlotter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumPlotter.SpectrumPlotter.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chinese_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Axes</span></span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumPlotter.html#SpectrumPlotter.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumPlotter.SpectrumPlotter.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot the spectrum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> – The axes to plot on.</p></li>
+<li><p><strong>chinese_label</strong> – Whether to use Chinese labels.</p></li>
+<li><p><strong>args</strong> – Other arguments to pass to plt.plot</p></li>
+<li><p><strong>kargs</strong> – Other keyword arguments to pass to plt.plot</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The axes object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumPlotter.SpectrumPlotter.plot_regions">
+<span class="sig-name descname"><span class="pre">plot_regions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chinese_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Axes</span></span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumPlotter.html#SpectrumPlotter.plot_regions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumPlotter.SpectrumPlotter.plot_regions" title="Link to this definition"></a></dt>
+<dd><p>Plot regions of the spectrum, with peaks marked as stars.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> – The axes to plot on.</p></li>
+<li><p><strong>chinese_label</strong> – Whether to use Chinese labels.</p></li>
+<li><p><strong>args</strong> – Other arguments to pass to plt.plot</p></li>
+<li><p><strong>kargs</strong> – Other keyword arguments to pass to plt.plot</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The axes object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumPlotter.SpectrumPlotter.plot_peaks">
+<span class="sig-name descname"><span class="pre">plot_peaks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_fitness</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chinese_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_baseline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_fitted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Axes</span></span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumPlotter.html#SpectrumPlotter.plot_peaks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumPlotter.SpectrumPlotter.plot_peaks" title="Link to this definition"></a></dt>
+<dd><p>Plot detailed fitted peaks in regions of the spectrum.
+Baseline is optional to reconstruct the unstripped spectrum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_fitness</strong> – The minimum fitness of the region to be fitted.</p></li>
+<li><p><strong>axes</strong> – The axes to plot on.</p></li>
+<li><p><strong>chinese_label</strong> – Whether to use Chinese labels.</p></li>
+<li><p><strong>baseline</strong> – The baseline to be fitted.</p></li>
+<li><p><strong>plot_baseline</strong> – Whether to plot the baseline.</p></li>
+<li><p><strong>plot_fitted</strong> – Whether to plot the fitted spectrum.</p></li>
+<li><p><strong>args</strong> – Other arguments to pass to plt.plot</p></li>
+<li><p><strong>kargs</strong> – Other keyword arguments to pass to plt.plot</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The axes object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamut.spectrum.SpectrumSimulator">
+<span id="gamut-spectrum-spectrumsimulator-module"></span><h2>gamut.spectrum.SpectrumSimulator module<a class="headerlink" href="#module-gamut.spectrum.SpectrumSimulator" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumSimulator.SpectrumSimulator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.spectrum.SpectrumSimulator.</span></span><span class="sig-name descname"><span class="pre">SpectrumSimulator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">baseline_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CalibrationFunction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peaks_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CalibrationFunction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CalibrationFunction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumSimulator.html#SpectrumSimulator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumSimulator.SpectrumSimulator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumSimulator.SpectrumSimulator.generate_baseline">
+<span class="sig-name descname"><span class="pre">generate_baseline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamut.spectrum.Spectrum.Spectrum" title="gamut.spectrum.Spectrum.Spectrum"><span class="pre">Spectrum</span></a></span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumSimulator.html#SpectrumSimulator.generate_baseline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumSimulator.SpectrumSimulator.generate_baseline" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumSimulator.SpectrumSimulator.generate_peaks">
+<span class="sig-name descname"><span class="pre">generate_peaks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peaks_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamut.spectrum.Spectrum.Spectrum" title="gamut.spectrum.Spectrum.Spectrum"><span class="pre">Spectrum</span></a></span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumSimulator.html#SpectrumSimulator.generate_peaks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumSimulator.SpectrumSimulator.generate_peaks" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumSimulator.SpectrumSimulator.add_noise">
+<span class="sig-name descname"><span class="pre">add_noise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamut.spectrum.Spectrum.Spectrum" title="gamut.spectrum.Spectrum.Spectrum"><span class="pre">Spectrum</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rand_seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamut.spectrum.Spectrum.Spectrum" title="gamut.spectrum.Spectrum.Spectrum"><span class="pre">Spectrum</span></a></span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumSimulator.html#SpectrumSimulator.add_noise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumSimulator.SpectrumSimulator.add_noise" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumSimulator.SpectrumSimulator.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseline_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peaks_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamut.spectrum.Spectrum.Spectrum" title="gamut.spectrum.Spectrum.Spectrum"><span class="pre">Spectrum</span></a></span></span><a class="reference internal" href="../_modules/gamut/spectrum/SpectrumSimulator.html#SpectrumSimulator.generate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.spectrum.SpectrumSimulator.SpectrumSimulator.generate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamut.spectrum.SpectrumSimulator.spectrum_parameter">
+<span class="sig-prename descclassname"><span class="pre">gamut.spectrum.SpectrumSimulator.</span></span><span class="sig-name descname"><span class="pre">spectrum_parameter</span></span><a class="headerlink" href="#gamut.spectrum.SpectrumSimulator.spectrum_parameter" title="Link to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">spectrum_parameters</span></code></p>
+</dd></dl>
+
+</section>
+<section id="module-gamut.spectrum.other">
+<span id="gamut-spectrum-other-module"></span><h2>gamut.spectrum.other module<a class="headerlink" href="#module-gamut.spectrum.other" title="Link to this heading"></a></h2>
+</section>
+<section id="module-gamut.spectrum">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-gamut.spectrum" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gamut.operator.html" class="btn btn-neutral float-left" title="gamut.operator package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gamut.test.html" class="btn btn-neutral float-right" title="gamut.test package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tsinghua University, Institute of Nuclear and New Energy Technology, THU-RSAG.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamut.spectrum.SpectrumSimulator &mdash; GAMUT 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=e259d695"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GAMUT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dependencies.html">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../classes_and_algorithms.html">Classes and algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/index.html">Theory Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidoc/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GAMUT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gamut.spectrum.SpectrumSimulator</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gamut.spectrum.SpectrumSimulator</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+<span class="kn">import</span> <span class="nn">xml.dom.minidom</span> <span class="k">as</span> <span class="nn">minidom</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">strftime</span><span class="p">,</span> <span class="n">localtime</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
+<span class="kn">from</span> <span class="nn">xml.dom.minidom</span> <span class="kn">import</span> <span class="n">parse</span> <span class="k">as</span> <span class="n">parse_xml</span>
+<span class="kn">from</span> <span class="nn">re</span> <span class="kn">import</span> <span class="n">match</span>
+
+
+<span class="kn">from</span> <span class="nn">..classes.Calibration</span> <span class="kn">import</span> <span class="n">Calibration</span>
+<span class="kn">from</span> <span class="nn">..globals</span> <span class="kn">import</span> <span class="n">StructuredFunction</span>
+<span class="kn">from</span> <span class="nn">.Spectrum</span> <span class="kn">import</span> <span class="n">Spectrum</span>
+
+
+<div class="viewcode-block" id="SpectrumSimulator">
+<a class="viewcode-back" href="../../../apidoc/gamut.spectrum.html#gamut.spectrum.SpectrumSimulator.SpectrumSimulator">[docs]</a>
+<span class="k">class</span> <span class="nc">SpectrumSimulator</span><span class="p">:</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">baseline_function</span><span class="p">:</span> <span class="n">StructuredFunction</span><span class="p">,</span>
+                 <span class="n">peaks_function</span><span class="p">:</span> <span class="n">StructuredFunction</span><span class="p">,</span>
+                 <span class="n">noise_function</span><span class="p">:</span> <span class="n">StructuredFunction</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_baseline_function</span> <span class="o">=</span> <span class="n">baseline_function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_peaks_function</span> <span class="o">=</span> <span class="n">peaks_function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_noise_function</span> <span class="o">=</span> <span class="n">noise_function</span>
+
+<div class="viewcode-block" id="SpectrumSimulator.generate_baseline">
+<a class="viewcode-back" href="../../../apidoc/gamut.spectrum.html#gamut.spectrum.SpectrumSimulator.SpectrumSimulator.generate_baseline">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_baseline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
+        <span class="n">indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_baseline_function</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">indexes</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Spectrum</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="SpectrumSimulator.generate_peaks">
+<a class="viewcode-back" href="../../../apidoc/gamut.spectrum.html#gamut.spectrum.SpectrumSimulator.SpectrumSimulator.generate_peaks">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_peaks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">peaks_info</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
+        <span class="n">indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+        <span class="n">peaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">peak_info</span> <span class="ow">in</span> <span class="n">peaks_info</span><span class="p">:</span>
+            <span class="n">peaks</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_peaks_function</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">indexes</span><span class="p">,</span> <span class="n">peak_info</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Spectrum</span><span class="p">(</span><span class="n">peaks</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SpectrumSimulator.add_noise">
+<a class="viewcode-back" href="../../../apidoc/gamut.spectrum.html#gamut.spectrum.SpectrumSimulator.SpectrumSimulator.add_noise">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_noise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">:</span> <span class="n">Spectrum</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">rand_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
+        <span class="n">noised_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise_function</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">noised_spectrum</span></div>
+
+
+<div class="viewcode-block" id="SpectrumSimulator.generate">
+<a class="viewcode-back" href="../../../apidoc/gamut.spectrum.html#gamut.spectrum.SpectrumSimulator.SpectrumSimulator.generate">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">baseline_params</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+                 <span class="n">peaks_info</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
+                 <span class="n">noise_params</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+                 <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
+        <span class="n">baseline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_baseline</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">baseline_params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="n">peaks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_peaks</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">peaks_info</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="n">spectrum</span> <span class="o">=</span> <span class="n">baseline</span> <span class="o">+</span> <span class="n">peaks</span>
+        <span class="n">noised_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_noise</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">noise_params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">noised_spectrum</span></div>
+</div>
+
+
+<span class="n">spectrum_parameter</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;spectrum_parameters&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">,</span> <span class="s1">&#39;base_params&#39;</span><span class="p">,</span> <span class="s1">&#39;peaks_params&#39;</span><span class="p">])</span>
+<span class="n">spectrum_parameters</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;simple&#39;</span><span class="p">:</span> <span class="n">spectrum_parameter</span><span class="p">(</span><span class="s1">&#39;simple&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="p">[[</span><span class="mi">95</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">4000</span><span class="p">]]),</span>
+<span class="p">}</span>
+
+<span class="n">simuspecs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;simple&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;base_intensity&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;base_amplitude&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;simple&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>   <span class="c1"># FWHM~2.355*5~14.13, params[linear]=[0.14873, 0]</span>
+               <span class="s1">&#39;base_function&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span>  <span class="n">x</span><span class="o">**</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;peaks_info&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">95</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">4000</span><span class="p">]],</span> <span class="s1">&#39;FWHMcal&#39;</span><span class="p">:</span> <span class="n">Calibration</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.14873</span><span class="p">,</span> <span class="mi">0</span><span class="p">])},</span>
+    <span class="s1">&#39;double_slight&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;base_intensity&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;base_amplitude&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;double_slight&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>  
+                      <span class="s1">&#39;base_function&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span>  <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;peaks_info&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">70</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">4000</span><span class="p">],</span> <span class="p">[</span><span class="mi">105</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">3000</span><span class="p">]],</span> <span class="s1">&#39;FWHMcal&#39;</span><span class="p">:</span> <span class="n">Calibration</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">[</span><span class="mf">9.4225</span><span class="p">,</span> <span class="mf">0.067285</span><span class="p">,</span> <span class="mi">0</span><span class="p">])},</span>
+    <span class="s1">&#39;double_normal_narrow&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;base_intensity&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;base_amplitude&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;double_normal_narrow&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>  
+                             <span class="s1">&#39;base_function&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span>  <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mf">0.1</span><span class="p">),</span> <span class="s1">&#39;peaks_info&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">90</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4000</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">3000</span><span class="p">]]},</span>
+    <span class="s1">&#39;double_normal&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;base_intensity&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;base_amplitude&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;double_normal&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+                      <span class="s1">&#39;base_function&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span>  <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;peaks_info&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">70</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">4000</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3000</span><span class="p">]]},</span>
+    <span class="s1">&#39;double_severe&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;base_intensity&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s1">&#39;base_amplitude&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;double_severe&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>  
+                      <span class="s1">&#39;base_function&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span>  <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mf">0.4</span><span class="p">)),</span> <span class="s1">&#39;peaks_info&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">70</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4000</span><span class="p">],</span> <span class="p">[</span><span class="mi">90</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3000</span><span class="p">]]},</span>
+    <span class="s1">&#39;synthesized&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;base_intensity&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;base_amplitude&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;synthesized_multiplets&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>  
+                    <span class="s1">&#39;base_function&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span>  <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;peaks_info&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">30</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">4000</span><span class="p">],</span> <span class="p">[</span><span class="mi">60</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span>  <span class="p">[</span><span class="mi">130</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">,</span> <span class="mi">2400</span><span class="p">],</span> <span class="p">[</span><span class="mi">145</span><span class="p">,</span> <span class="mf">4.3</span><span class="p">,</span> <span class="mi">1600</span><span class="p">],</span> <span class="p">[</span><span class="mi">175</span><span class="p">,</span> <span class="mf">4.7</span><span class="p">,</span> <span class="mi">2600</span><span class="p">]]},</span>
+    <span class="s1">&#39;synthesized_2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;base_intensity&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;base_amplitude&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;synthesized_multiplets&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>  <span class="c1"># with FWHM cal: 2+0.03*(E+0.05*E**2)**0.5</span>
+                      <span class="s1">&#39;base_function&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span>  <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;peaks_info&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">30</span><span class="p">,</span> <span class="mf">2.33</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span> <span class="p">[</span><span class="mi">45</span><span class="p">,</span> <span class="mf">2.42</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span> <span class="p">[</span><span class="mi">70</span><span class="p">,</span> <span class="mf">2.57</span><span class="p">,</span> <span class="mi">4000</span><span class="p">],</span> <span class="p">[</span><span class="mi">75</span><span class="p">,</span> <span class="mf">2.61</span><span class="p">,</span> <span class="mi">1500</span><span class="p">],</span>
+                                                                    <span class="p">[</span><span class="mi">110</span><span class="p">,</span> <span class="mf">2.83</span><span class="p">,</span> <span class="mi">1500</span><span class="p">],</span> <span class="p">[</span><span class="mi">117</span><span class="p">,</span> <span class="mf">2.87</span><span class="p">,</span> <span class="mi">500</span><span class="p">],</span> <span class="p">[</span><span class="mi">126</span><span class="p">,</span> <span class="mf">2.90</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span>
+                                                                    <span class="p">[</span><span class="mi">150</span><span class="p">,</span> <span class="mf">3.07</span><span class="p">,</span> <span class="mi">2400</span><span class="p">],</span> <span class="p">[</span><span class="mi">165</span><span class="p">,</span> <span class="mf">3.16</span><span class="p">,</span> <span class="mi">1600</span><span class="p">],</span>
+                                                                    <span class="p">[</span><span class="mi">230</span><span class="p">,</span> <span class="mf">3.56</span><span class="p">,</span> <span class="mi">4000</span><span class="p">],</span> <span class="p">[</span><span class="mi">275</span><span class="p">,</span> <span class="mf">3.83</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span> <span class="p">[</span><span class="mi">290</span><span class="p">,</span> <span class="mf">3.93</span><span class="p">,</span> <span class="mi">2500</span><span class="p">],</span> <span class="p">[</span><span class="mi">305</span><span class="p">,</span> <span class="mf">4.02</span><span class="p">,</span> <span class="mi">1500</span><span class="p">],</span>
+                                                                    <span class="p">[</span><span class="mi">310</span><span class="p">,</span> <span class="mf">4.04</span><span class="p">,</span> <span class="mi">1500</span><span class="p">],</span> <span class="p">[</span><span class="mi">317</span><span class="p">,</span> <span class="mf">4.1</span><span class="p">,</span> <span class="mi">500</span><span class="p">],</span> <span class="p">[</span><span class="mi">344</span><span class="p">,</span> <span class="mf">4.22</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span> <span class="p">[</span><span class="mi">364</span><span class="p">,</span> <span class="mf">4.40</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span> <span class="p">[</span><span class="mi">386</span><span class="p">,</span> <span class="mf">4.50</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span>
+                                                                    <span class="p">[</span><span class="mi">450</span><span class="p">,</span> <span class="mf">4.91</span><span class="p">,</span> <span class="mi">2400</span><span class="p">],</span> <span class="p">[</span><span class="mi">470</span><span class="p">,</span> <span class="mf">5.01</span><span class="p">,</span> <span class="mi">1600</span><span class="p">]]},</span>
+    <span class="s1">&#39;single_peaks&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;base_intensity&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;base_amplitude&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;synthesized_singlets&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>  <span class="c1"># with FWHM cal: 2+0.03*(E+0.05*E**2)**0.5</span>
+                     <span class="s1">&#39;base_function&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span>  <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;peaks_info&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">110</span><span class="p">,</span> <span class="mf">2.95</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span> <span class="p">[</span><span class="mi">130</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span> <span class="p">[</span><span class="mi">180</span><span class="p">,</span> <span class="mf">3.41</span><span class="p">,</span> <span class="mi">4000</span><span class="p">],</span> <span class="p">[</span><span class="mi">230</span><span class="p">,</span> <span class="mf">3.75</span><span class="p">,</span> <span class="mi">1500</span><span class="p">],</span>
+                                                                   <span class="p">[</span><span class="mi">285</span><span class="p">,</span> <span class="mf">4.14</span><span class="p">,</span> <span class="mi">2500</span><span class="p">],</span> <span class="p">[</span><span class="mi">335</span><span class="p">,</span> <span class="mf">4.4</span><span class="p">,</span> <span class="mi">2500</span><span class="p">],</span> <span class="p">[</span><span class="mi">375</span><span class="p">,</span> <span class="mf">4.7</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span>
+                                                                   <span class="p">[</span><span class="mi">410</span><span class="p">,</span> <span class="mf">4.95</span><span class="p">,</span> <span class="mi">2400</span><span class="p">],</span> <span class="p">[</span><span class="mi">450</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">,</span> <span class="mi">1600</span><span class="p">]]},</span>
+    <span class="s1">&#39;single_peaks_bigger&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;base_intensity&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;base_amplitude&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;synthesized_singlets&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>  <span class="c1"># with FWHM cal: 2+0.03*(E+0.05*E**2)**0.5</span>
+                            <span class="s1">&#39;base_function&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span>  <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;peaks_info&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">110</span><span class="p">,</span> <span class="mf">2.95</span><span class="p">,</span> <span class="mi">4000</span><span class="p">],</span> <span class="p">[</span><span class="mi">130</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4000</span><span class="p">],</span> <span class="p">[</span><span class="mi">180</span><span class="p">,</span> <span class="mf">3.41</span><span class="p">,</span> <span class="mi">8000</span><span class="p">],</span> <span class="p">[</span><span class="mi">230</span><span class="p">,</span> <span class="mf">3.75</span><span class="p">,</span> <span class="mi">3500</span><span class="p">],</span>
+                                                                          <span class="p">[</span><span class="mi">285</span><span class="p">,</span> <span class="mf">4.14</span><span class="p">,</span> <span class="mi">5000</span><span class="p">],</span> <span class="p">[</span><span class="mi">335</span><span class="p">,</span> <span class="mf">4.4</span><span class="p">,</span> <span class="mi">5000</span><span class="p">],</span> <span class="p">[</span><span class="mi">375</span><span class="p">,</span> <span class="mf">4.7</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span>
+                                                                          <span class="p">[</span><span class="mi">410</span><span class="p">,</span> <span class="mf">4.95</span><span class="p">,</span> <span class="mi">4800</span><span class="p">],</span> <span class="p">[</span><span class="mi">450</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">,</span> <span class="mi">3200</span><span class="p">]]},</span>
+    <span class="s1">&#39;single_peaks_biggest&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;base_intensity&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;base_amplitude&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;synthesized_singlets&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>  <span class="c1"># with FWHM cal: 2+0.03*(E+0.05*E**2)**0.5</span>
+                            <span class="s1">&#39;base_function&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span>  <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;peaks_info&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">110</span><span class="p">,</span> <span class="mf">2.95</span><span class="p">,</span> <span class="mi">12000</span><span class="p">],</span> <span class="p">[</span><span class="mi">130</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8000</span><span class="p">],</span> <span class="p">[</span><span class="mi">180</span><span class="p">,</span> <span class="mf">3.41</span><span class="p">,</span> <span class="mi">6000</span><span class="p">],</span> <span class="p">[</span><span class="mi">230</span><span class="p">,</span> <span class="mf">3.75</span><span class="p">,</span> <span class="mi">7000</span><span class="p">],</span>
+                                                                          <span class="p">[</span><span class="mi">285</span><span class="p">,</span> <span class="mf">4.14</span><span class="p">,</span> <span class="mi">10000</span><span class="p">],</span> <span class="p">[</span><span class="mi">335</span><span class="p">,</span> <span class="mf">4.4</span><span class="p">,</span> <span class="mi">10000</span><span class="p">],</span> <span class="p">[</span><span class="mi">375</span><span class="p">,</span> <span class="mf">4.7</span><span class="p">,</span> <span class="mi">5000</span><span class="p">],</span>
+                                                                          <span class="p">[</span><span class="mi">410</span><span class="p">,</span> <span class="mf">4.95</span><span class="p">,</span> <span class="mi">7800</span><span class="p">],</span> <span class="p">[</span><span class="mi">450</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">,</span> <span class="mi">6200</span><span class="p">]]},</span>
+    <span class="s1">&#39;test&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;base_intensity&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;base_amplitude&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;synthesized_singlets&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>  <span class="c1"># with FWHM cal: 2+0.03*(E+0.05*E**2)**0.5</span>
+                            <span class="s1">&#39;base_function&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span>  <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;peaks_info&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">130</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4000</span><span class="p">],</span> <span class="p">[</span><span class="mi">180</span><span class="p">,</span> <span class="mf">3.41</span><span class="p">,</span> <span class="mi">8000</span><span class="p">],</span> <span class="p">[</span><span class="mi">230</span><span class="p">,</span> <span class="mf">3.75</span><span class="p">,</span> <span class="mi">3500</span><span class="p">],</span>
+                                                                          <span class="p">[</span><span class="mi">285</span><span class="p">,</span> <span class="mf">4.14</span><span class="p">,</span> <span class="mi">5000</span><span class="p">],</span> <span class="p">[</span><span class="mi">335</span><span class="p">,</span> <span class="mf">4.4</span><span class="p">,</span> <span class="mi">5000</span><span class="p">],</span> <span class="p">[</span><span class="mi">375</span><span class="p">,</span> <span class="mf">4.7</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span>
+                                                                          <span class="p">[</span><span class="mi">410</span><span class="p">,</span> <span class="mf">4.95</span><span class="p">,</span> <span class="mi">4800</span><span class="p">],</span> <span class="p">[</span><span class="mi">450</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">,</span> <span class="mi">3200</span><span class="p">],</span>
+                                                                          <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mf">2.33</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span> <span class="p">[</span><span class="mi">45</span><span class="p">,</span> <span class="mf">2.42</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span> <span class="p">[</span><span class="mi">70</span><span class="p">,</span> <span class="mf">2.57</span><span class="p">,</span> <span class="mi">4000</span><span class="p">],</span> <span class="p">[</span><span class="mi">77</span><span class="p">,</span> <span class="mf">2.61</span><span class="p">,</span> <span class="mi">1500</span><span class="p">],</span>
+                                                                    <span class="p">[</span><span class="mi">110</span><span class="p">,</span> <span class="mf">2.83</span><span class="p">,</span> <span class="mi">1500</span><span class="p">],</span> <span class="p">[</span><span class="mi">117</span><span class="p">,</span> <span class="mf">2.87</span><span class="p">,</span> <span class="mi">500</span><span class="p">],</span> <span class="p">[</span><span class="mi">126</span><span class="p">,</span> <span class="mf">2.90</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span>
+                                                                    <span class="p">[</span><span class="mi">150</span><span class="p">,</span> <span class="mf">3.07</span><span class="p">,</span> <span class="mi">2400</span><span class="p">],</span> <span class="p">[</span><span class="mi">165</span><span class="p">,</span> <span class="mf">3.16</span><span class="p">,</span> <span class="mi">1600</span><span class="p">],</span>
+                                                                    <span class="p">[</span><span class="mi">275</span><span class="p">,</span> <span class="mf">3.83</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span> <span class="p">[</span><span class="mi">290</span><span class="p">,</span> <span class="mf">3.93</span><span class="p">,</span> <span class="mi">2500</span><span class="p">],</span> <span class="p">[</span><span class="mi">305</span><span class="p">,</span> <span class="mf">4.02</span><span class="p">,</span> <span class="mi">1500</span><span class="p">],</span>
+                                                                    <span class="p">[</span><span class="mi">310</span><span class="p">,</span> <span class="mf">4.04</span><span class="p">,</span> <span class="mi">1500</span><span class="p">],</span> <span class="p">[</span><span class="mi">317</span><span class="p">,</span> <span class="mf">4.1</span><span class="p">,</span> <span class="mi">500</span><span class="p">],</span> <span class="p">[</span><span class="mi">344</span><span class="p">,</span> <span class="mf">4.22</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span> 
+                                                                    <span class="p">[</span><span class="mi">470</span><span class="p">,</span> <span class="mf">5.01</span><span class="p">,</span> <span class="mi">2600</span><span class="p">]]},</span>
+<span class="p">}</span>
+
+
+<span class="k">for</span> <span class="n">peak_info</span> <span class="ow">in</span> <span class="n">simuspecs</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">][</span><span class="s1">&#39;peaks_info&#39;</span><span class="p">]:</span>
+    <span class="n">peak_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">2</span>
+    <span class="n">peak_info</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">2</span>
+<span class="n">simuspecs</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">][</span><span class="s1">&#39;length&#39;</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">2</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tsinghua University, Institute of Nuclear and New Energy Technology.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

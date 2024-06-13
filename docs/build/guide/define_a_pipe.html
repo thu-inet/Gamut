@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Define a Pipe &mdash; GAMUT 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=e259d695"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Define a PipeNet" href="define_a_pipenet.html" />
+    <link rel="prev" title="Initialize an Operator" href="initialize_an_operator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GAMUT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dependencies.html">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../classes_and_algorithms.html">Classes and Algorithms</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="import_a_spectrum.html">Import a Spectrum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualize_a_spectrum.html">Visualize a Spectrum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="export_a_spectrum.html">Export a Spectrum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="initialize_an_operator.html">Initialize an Operator</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Define a Pipe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="define_a_pipenet.html">Define a PipeNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modify_a_spectrum.html">Modify a Spectrum</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/index.html">Theory Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../apidoc/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License Agreement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GAMUT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">User Manual</a></li>
+      <li class="breadcrumb-item active">Define a Pipe</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/guide/define_a_pipe.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="define-a-pipe">
+<h1>Define a Pipe<a class="headerlink" href="#define-a-pipe" title="Link to this heading"></a></h1>
+<p>When multiple algorithms should be executed in sequence, they can be concatenated into a <code class="xref py py-class docutils literal notranslate"><span class="pre">Pipe</span></code>
+object. A Pipe object is just like an <code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code> object. When it is called, it executes its first
+internal <code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code> object, and then passes its output spectrum to the next, and so on,
+until all <code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code> objects are called once.</p>
+<p>The <code class="xref py py-attr docutils literal notranslate"><span class="pre">inp_num</span></code> of all subsequent operators must equals to 1, and the inp_num of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Pipe</span></code> equals
+to that of its first <code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code> object.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># define two peak searching operators</span>
+<span class="n">covol</span> <span class="o">=</span> <span class="n">gt</span><span class="o">.</span><span class="n">DoubelConvolutionPeakSearcher</span><span class="p">(</span><span class="n">hwidth</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">covar</span> <span class="o">=</span> <span class="n">gt</span><span class="o">.</span><span class="n">CovariancePeakSearcher</span><span class="p">(</span><span class="n">hwidth</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">FWHM</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">weight_mode</span><span class="o">=</span><span class="s1">&#39;inverse&#39;</span><span class="p">)</span>
+<span class="n">covar</span><span class="o">.</span><span class="n">merge_mode</span> <span class="o">=</span> <span class="s1">&#39;Old&#39;</span>
+<span class="c1"># concatenate them into a Pipe object</span>
+<span class="n">search</span> <span class="o">=</span> <span class="n">gt</span><span class="o">.</span><span class="n">Pipe</span><span class="p">([</span><span class="n">covol</span><span class="p">,</span> <span class="n">covar</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="initialize_an_operator.html" class="btn btn-neutral float-left" title="Initialize an Operator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="define_a_pipenet.html" class="btn btn-neutral float-right" title="Define a PipeNet" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tsinghua University, Institute of Nuclear and New Energy Technology, THU-RSAG.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

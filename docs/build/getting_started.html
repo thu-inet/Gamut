@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started &mdash; GAMUT 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=e259d695"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Classes and Algorithms" href="classes_and_algorithms.html" />
+    <link rel="prev" title="Dependencies" href="dependencies.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GAMUT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dependencies.html">Dependencies</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#interactive-analysis-with-basic-apis">Interactive Analysis with Basic APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#end-to-end-analysis-with-the-predefined-workflow">End-to-End Analysis with the Predefined Workflow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="classes_and_algorithms.html">Classes and Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/index.html">User Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theory/index.html">Theory Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License Agreement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GAMUT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Getting Started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
+<section id="interactive-analysis-with-basic-apis">
+<h2>Interactive Analysis with Basic APIs<a class="headerlink" href="#interactive-analysis-with-basic-apis" title="Link to this heading"></a></h2>
+<p>Here is a MWE (minimum working example) of GAMUT to analyze a gamma spectrum interactively.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gamut</span> <span class="k">as</span> <span class="nn">gt</span>
+
+<span class="c1"># import a gamma spectrum</span>
+<span class="n">spec</span> <span class="o">=</span> <span class="n">gt</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">from_GammaVision</span><span class="p">(</span><span class="s2">&quot;spectrum.spe&quot;</span><span class="p">)</span>
+
+<span class="c1"># initiate an operator/algorithm</span>
+<span class="n">smoother</span> <span class="o">=</span> <span class="n">gt</span><span class="o">.</span><span class="n">CentroidSmoother</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># analyze the spectrum</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">smoother</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+
+<span class="c1"># visualize the spectrum</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;smoothed_spectrum.png&quot;</span><span class="p">)</span>
+
+<span class="c1"># export the spectrum</span>
+<span class="n">out</span><span class="o">.</span><span class="n">export_to_GammaVision</span><span class="p">(</span><span class="s2">&quot;smoothed_spectrum.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The above code snippet does the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gamut</span> <span class="k">as</span> <span class="nn">gt</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="0">
+<li><p>Import the GAMUT library. This is the first step of using GAMUT. The library is constructed in a hierarchical manner, with the top-level module being <a class="reference internal" href="apidoc/gamut.html#module-gamut" title="gamut"><code class="xref py py-mod docutils literal notranslate"><span class="pre">gamut</span></code></a>. For more information on the available submodules, see <a class="reference internal" href="apidoc/index.html#api-reference"><span class="std std-ref">API References</span></a>.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import a gamma spectrum</span>
+<span class="n">spec</span> <span class="o">=</span> <span class="n">gt</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">from_GammaVision</span><span class="p">(</span><span class="s2">&quot;spectrum.spe&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>Import a gamma spectrum from a file. Here a <code class="xref py py-class docutils literal notranslate"><span class="pre">Spectrum</span></code> object is initialized by importing from a GammaVision file. For more information on how to import a spectrum from different file formats, see <a class="reference internal" href="guide/import_a_spectrum.html#guide-import-a-spectrum"><span class="std std-ref">Import a Spectrum</span></a>.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import a gamma spectrum</span>
+<span class="n">smoother</span> <span class="o">=</span> <span class="n">gt</span><span class="o">.</span><span class="n">CentroidSmoother</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Initialize an operator/algorithm. Here, a <code class="xref py py-class docutils literal notranslate"><span class="pre">CentroidSmoother</span></code> object is initialized with a smoothing order of 2. Parameters are passed to the algorithm during initialization. For more information on the available algorithms and their initialization, see <a class="reference internal" href="classes_and_algorithms.html#algotithms"><span class="std std-ref">List of Algorithms</span></a> and <a class="reference internal" href="guide/initialize_an_operator.html#guide-initialize-an-operator"><span class="std std-ref">Initialize an Operator</span></a>.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># analyze the spectrum</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">smoother</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Analyze the spectrum. One must pass the correct number of <code class="xref py py-class docutils literal notranslate"><span class="pre">Spectrum</span></code> objects to the algorithm (specified by <code class="xref py py-attr docutils literal notranslate"><span class="pre">inp_num</span></code> attribute and it is 1 for <code class="xref py py-class docutils literal notranslate"><span class="pre">CentroidSmoother</span></code>). And a <code class="xref py py-class docutils literal notranslate"><span class="pre">Spectrum</span></code> object is returned as output.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># visualize the spectrum</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">spec</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;smoothed_spectrum.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Visualize the spectrum. Multiple visualization methods are available to control which data to display. For more information on how to visualize a spectrum, see <a class="reference internal" href="guide/visualize_a_spectrum.html#guide-visualize-a-spectrum"><span class="std std-ref">Visualize a Spectrum</span></a>.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># export the spectrum</span>
+<span class="n">out</span><span class="o">.</span><span class="n">export_to_GammaVision</span><span class="p">(</span><span class="s2">&quot;smoothed_spectrum.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p>Export the spectrum. The <strong>Spectrum</strong> object can be exported to a file. For more information on how to export a spectrum to different file formats, see <a class="reference internal" href="guide/export_a_spectrum.html#guide-export-a-spectrum"><span class="std std-ref">Export a Spectrum</span></a>.</p></li>
+</ol>
+</section>
+<section id="end-to-end-analysis-with-the-predefined-workflow">
+<h2>End-to-End Analysis with the Predefined Workflow<a class="headerlink" href="#end-to-end-analysis-with-the-predefined-workflow" title="Link to this heading"></a></h2>
+<p>There is also a pre-defined workflow in GAMUT, which provides the out-of-the-box gamma spectrum analysis capacity for beginner users.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gamut</span> <span class="k">as</span> <span class="nn">gt</span>
+
+<span class="c1"># import a gamma spectrum</span>
+<span class="n">spec</span> <span class="o">=</span> <span class="n">gt</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">from_GammaVision</span><span class="p">(</span><span class="s2">&quot;spectrum.spe&quot;</span><span class="p">)</span>
+
+<span class="c1"># run the default workflow</span>
+<span class="n">nodes</span> <span class="o">=</span> <span class="n">gt</span><span class="o">.</span><span class="n">default_workflow</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+
+<span class="c1"># analyze the spectrum</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">nodes</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># export the spectrum</span>
+<span class="n">out</span><span class="o">.</span><span class="n">export_to_GammaVision</span><span class="p">(</span><span class="s2">&quot;analyzed_spectrum.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The key part of the above code snippet does the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># run the default workflow</span>
+<span class="n">nodes</span> <span class="o">=</span> <span class="n">gt</span><span class="o">.</span><span class="n">default_workflow</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>Run the default workflow. GAMUT provides a default workflow for the out-of-the-box gamma spectrum analysis. It is a <code class="xref py py-class docutils literal notranslate"><span class="pre">PipeNet</span></code> object, and can execute a serie of algorithms automatically upon calling. For more information on the <code class="xref py py-class docutils literal notranslate"><span class="pre">PipeNet</span></code> class, see <a class="reference internal" href="guide/define_a_pipenet.html#guide-define-a-pipenet"><span class="std std-ref">PipeNet</span></a>.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># run the default workflow</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">nodes</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>Retrive the analyzed spectrum. After executing the <code class="xref py py-class docutils literal notranslate"><span class="pre">PipeNet</span></code> object, the output is a list of <code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code> objects, which is used to store <code class="xref py py-class docutils literal notranslate"><span class="pre">Spectrum</span></code> objects. In the default workflow, the final analyzed spectrum is stored in the 5th node. So we retrieve the first element in the fifth <code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code> object to get the analysis results.</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dependencies.html" class="btn btn-neutral float-left" title="Dependencies" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="classes_and_algorithms.html" class="btn btn-neutral float-right" title="Classes and Algorithms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tsinghua University, Institute of Nuclear and New Energy Technology, THU-RSAG.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

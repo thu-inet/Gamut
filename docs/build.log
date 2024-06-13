@@ -1,0 +1,35 @@
+[sphinx-autobuild] Starting initial build
+[sphinx-autobuild] > sphinx-build source build
+Running Sphinx v7.3.7
+loading pickled environment... done
+building [mo]: targets for 0 po files that are out of date
+writing output... 
+building [html]: targets for 5 source files that are out of date
+updating environment: 0 added, 5 changed, 0 removed
+reading sources... [ 20%] apidoc/gamutreading sources... [ 40%] apidoc/gamut.classesreading sources... [ 60%] apidoc/gamut.operatorsreading sources... [ 80%] apidoc/gamut.spectrumreading sources... [100%] apidoc/modules
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... done
+preparing documents... done
+copying assets... copying static files... done
+copying extra files... done
+done
+writing output... [ 17%] apidoc/gamutwriting output... [ 33%] apidoc/gamut.classeswriting output... [ 50%] apidoc/gamut.operatorswriting output... [ 67%] apidoc/gamut.spectrumwriting output... [ 83%] apidoc/moduleswriting output... [100%] index
+generating indices... genindex py-modindex done
+highlighting module code... [ 20%] gamut.classes.Calibrationhighlighting module code... [ 40%] gamut.classes.Peakhighlighting module code... [ 60%] gamut.classes.Regionhighlighting module code... [ 80%] gamut.globalshighlighting module code... [100%] gamut.utils
+writing additional pages... search done
+copying images... [100%] header.png
+dumping search index in English (code: en)... done
+dumping object inventory... done
+
+====================== slowest reading durations =======================
+0.703 apidoc/gamut
+0.093 apidoc/gamut.classes
+0.047 apidoc/gamut.operators
+0.032 apidoc/gamut.spectrum
+0.000 apidoc/modules
+build succeeded, 25 warnings.
+
+The HTML pages are in build.
+[sphinx-autobuild] Serving on http://127.0.0.1:8000
+[sphinx-autobuild] Waiting to detect changes...

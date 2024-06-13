@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamut.operator.Operator &mdash; GAMUT 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=e259d695"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GAMUT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dependencies.html">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../classes_and_algorithms.html">Classes and Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/index.html">User Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/index.html">Theory Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidoc/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License Agreement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GAMUT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gamut.operator.Operator</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gamut.operator.Operator</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">..spectrum.Spectrum</span> <span class="kn">import</span> <span class="n">Spectrum</span>
+
+
+<div class="viewcode-block" id="Operator">
+<a class="viewcode-back" href="../../../apidoc/gamut.operator.html#gamut.operator.Operator.Operator">[docs]</a>
+<span class="k">class</span> <span class="nc">Operator</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Operator is the basic class in GAMUT to wrap all spectrum analysis algorithms.    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp_num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inp_num</span> <span class="o">=</span> <span class="n">inp_num</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Operator&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_label</span> <span class="o">=</span> <span class="n">label</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">inp_num</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inp_num</span>
+
+    <span class="nd">@label</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_label</span> <span class="o">=</span> <span class="n">label</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Operator[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">]&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Operator[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">]</span><span class="se">\n</span><span class="s2"> </span><span class="se">\</span>
+<span class="s2">|InpNum: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">inp_num</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectra</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Spectrum</span><span class="p">]</span> <span class="o">|</span> <span class="n">Spectrum</span><span class="p">,</span> <span class="n">check_type</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">add_label</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spectra</span><span class="p">,</span> <span class="n">Spectrum</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">inp_num</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">spectra</span> <span class="o">=</span> <span class="p">[</span><span class="n">spectra</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">check_type</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">Spectrum</span><span class="p">)</span> <span class="k">for</span> <span class="n">spectrum</span> <span class="ow">in</span> <span class="n">spectra</span><span class="p">])):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Input must be a list of Spectrum object.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inp_num</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">spectra</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inp_num</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Input must be a list of length </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">inp_num</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+
+        <span class="n">spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__run__</span><span class="p">(</span><span class="n">spectra</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dbg__</span><span class="p">(</span><span class="n">spectrum</span><span class="p">)</span>
+        <span class="n">spectrum</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">add_label</span><span class="p">:</span>
+            <span class="n">spectrum</span><span class="o">.</span><span class="n">label</span> <span class="o">+=</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label</span>
+        <span class="k">return</span> <span class="n">spectrum</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">__run__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectra</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Spectrum</span><span class="p">]</span> <span class="o">|</span> <span class="n">Spectrum</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">__dbg__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">:</span> <span class="n">Spectrum</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="Pipe">
+<a class="viewcode-back" href="../../../apidoc/gamut.operator.html#gamut.operator.Operator.Pipe">[docs]</a>
+<span class="k">class</span> <span class="nc">Pipe</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operators</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Operator</span><span class="p">],</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">operator</span> <span class="ow">in</span> <span class="n">operators</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="k">if</span> <span class="n">operator</span><span class="o">.</span><span class="n">inp_num</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Subsequent operator of inp_num </span><span class="si">{</span><span class="n">operator</span><span class="o">.</span><span class="n">inp_num</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_operators</span> <span class="o">=</span> <span class="n">operators</span>
+
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;&gt;&gt;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">operator</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">operator</span> <span class="ow">in</span> <span class="n">operators</span><span class="p">])</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">operators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">inp_num</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">operators</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Operator</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operators</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">spectra</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Spectrum</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectra</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Pipe[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">]&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">operators</span> <span class="o">=</span> <span class="s1">&#39;&gt;&gt;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">operator</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">operator</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">])</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Pipe[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">]</span><span class="se">\n</span><span class="s2"> </span><span class="se">\</span>
+<span class="s2">|InpNum: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">inp_num</span><span class="si">}</span><span class="se">\n</span><span class="s2"> </span><span class="se">\</span>
+<span class="s2">|Operators: </span><span class="si">{</span><span class="n">operators</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__run__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectra</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Spectrum</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spectra</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">label</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label</span>
+
+        <span class="n">spectrum</span> <span class="o">=</span> <span class="n">spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">operator</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">:</span>
+            <span class="n">spectrum</span> <span class="o">=</span> <span class="n">operator</span><span class="p">(</span><span class="n">spectra</span><span class="p">,</span> <span class="n">check_type</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_label</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_spectra</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spectrum</span><span class="p">)</span>
+            <span class="n">spectra</span> <span class="o">=</span> <span class="p">[</span><span class="n">spectrum</span><span class="p">]</span>
+
+        <span class="n">spectrum</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
+        <span class="k">return</span> <span class="n">spectrum</span>
+
+<div class="viewcode-block" id="Pipe.append">
+<a class="viewcode-back" href="../../../apidoc/gamut.operator.html#gamut.operator.Operator.Pipe.append">[docs]</a>
+    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operator</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">Operator</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">operator</span><span class="o">.</span><span class="n">inp_num</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Subsequent operator of inp_num </span><span class="si">{</span><span class="n">operator</span><span class="o">.</span><span class="n">inp_num</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">operator</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">Pipe</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">operator</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">inp_num</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Subsequent operator of inp_num </span><span class="si">{</span><span class="n">operator</span><span class="o">.</span><span class="n">inp_num</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_operators</span> <span class="o">+=</span> <span class="n">operator</span><span class="o">.</span><span class="n">_operators</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Input must be a Spectrum object.&#39;</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">list_spectrum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">spectrum</span> <span class="k">for</span> <span class="n">spectrum</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectra</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Pipe.get_spectrum">
+<a class="viewcode-back" href="../../../apidoc/gamut.operator.html#gamut.operator.Operator.Pipe.get_spectrum">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_spectrum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectra</span><span class="p">[</span><span class="n">index</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Node">
+<a class="viewcode-back" href="../../../apidoc/gamut.operator.html#gamut.operator.Operator.Node">[docs]</a>
+<span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">spectra</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Spectrum</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spectra</span> <span class="o">=</span> <span class="n">spectra</span>
+        
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectra</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spectra</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectra</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Flow">
+<a class="viewcode-back" href="../../../apidoc/gamut.operator.html#gamut.operator.Operator.Flow">[docs]</a>
+<span class="k">class</span> <span class="nc">Flow</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operator</span><span class="p">:</span> <span class="n">Operator</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Operator</span><span class="p">]</span> <span class="o">|</span> <span class="n">Pipe</span><span class="p">,</span> 
+                 <span class="n">inp_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">inp_order</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> 
+                 <span class="n">outp_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">outp_order</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">opr</span><span class="p">,</span> <span class="n">Operator</span><span class="p">)</span> <span class="k">for</span> <span class="n">opr</span> <span class="ow">in</span> <span class="n">operator</span><span class="p">]):</span>
+                <span class="n">operator</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">operator</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Input must be a list of Operator object.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="o">=</span> <span class="n">operator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inp_id</span> <span class="o">=</span> <span class="n">inp_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inp_order</span> <span class="o">=</span> <span class="n">inp_order</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inp_order</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">inp_order</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outp_id</span> <span class="o">=</span> <span class="n">outp_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outp_order</span> <span class="o">=</span> <span class="n">outp_order</span></div>
+
+
+
+<div class="viewcode-block" id="PipeNet">
+<a class="viewcode-back" href="../../../apidoc/gamut.operator.html#gamut.operator.Operator.PipeNet">[docs]</a>
+<span class="k">class</span> <span class="nc">PipeNet</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Flow</span><span class="p">],</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;PipeNet&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_label</span> <span class="o">=</span> <span class="n">label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_flows</span> <span class="o">=</span> <span class="n">flows</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rank_nodes</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label</span>
+
+    <span class="nd">@label</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_label</span> <span class="o">=</span> <span class="n">label</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Node</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span>
+
+    <span class="k">def</span> <span class="nf">_rank_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate spectra nodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ranked_nodes_id</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">flow</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flows</span><span class="p">:</span>
+            <span class="n">nid</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">inp_id</span>
+            <span class="n">spectra</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">i</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">flow</span><span class="o">.</span><span class="n">inp_order</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">nid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ranked_nodes_id</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">nid</span><span class="p">]</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">nid</span><span class="p">,</span> <span class="n">spectra</span><span class="p">)</span>
+                <span class="n">ranked_nodes_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flow</span><span class="o">.</span><span class="n">inp_id</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">nid</span><span class="p">]</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">spectra</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">spectra</span><span class="p">)</span>
+
+        <span class="n">ranked_nodes_id</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">flow</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flows</span><span class="p">:</span>
+            <span class="n">nid</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">outp_id</span>
+            <span class="n">spectra</span> <span class="o">=</span> <span class="p">{</span><span class="n">flow</span><span class="o">.</span><span class="n">outp_order</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">nid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ranked_nodes_id</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">nid</span><span class="p">]</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">nid</span><span class="p">,</span> <span class="n">spectra</span><span class="p">)</span>
+                <span class="n">ranked_nodes_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flow</span><span class="o">.</span><span class="n">inp_id</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">nid</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">flow</span><span class="o">.</span><span class="n">outp_order</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">spectra</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Node </span><span class="si">{</span><span class="n">nid</span><span class="si">}</span><span class="s2">&#39;s output is not in node</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&#39;s input&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Node 0 does not exist.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_check_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flow</span><span class="p">:</span> <span class="n">Flow</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the flow is ready to execute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">inp_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">flow</span><span class="o">.</span><span class="n">inp_id</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">inp_node</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">flow</span><span class="o">.</span><span class="n">inp_order</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_execute_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flow</span><span class="p">:</span> <span class="n">Flow</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute the flow.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">inp_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">flow</span><span class="o">.</span><span class="n">inp_id</span><span class="p">]</span>
+        <span class="n">outp_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">flow</span><span class="o">.</span><span class="n">outp_id</span><span class="p">]</span>
+        <span class="n">spectra</span> <span class="o">=</span> <span class="p">[</span><span class="n">inp_node</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">flow</span><span class="o">.</span><span class="n">inp_order</span><span class="p">]</span>
+        <span class="n">spectrum</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">operator</span><span class="p">(</span><span class="n">spectra</span><span class="p">)</span>
+        <span class="n">outp_node</span><span class="p">[</span><span class="n">flow</span><span class="o">.</span><span class="n">outp_order</span><span class="p">]</span> <span class="o">=</span> <span class="n">spectrum</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectra</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Spectrum</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the PipeNet.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># insert the input spectra into initial node</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">spectra</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">spectra</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input spectra&#39; length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">spectra</span><span class="p">)</span><span class="si">}</span><span class="s2">  is not the same as Node 0&#39;s input length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">spectra</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="n">node</span><span class="o">.</span><span class="n">spectra</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">i</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">spectrum</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">spectra</span><span class="p">)])</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;================================&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;GAMUT: Start running </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;================================&quot;</span><span class="p">)</span>
+        <span class="n">unexecuted_flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flows</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">unexecuted_flows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">unexecuted_flows_copy</span> <span class="o">=</span> <span class="n">unexecuted_flows</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">flow</span> <span class="ow">in</span> <span class="n">unexecuted_flows</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_flow</span><span class="p">(</span><span class="n">flow</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;|Execute: Node</span><span class="si">{</span><span class="n">flow</span><span class="o">.</span><span class="n">inp_id</span><span class="si">:</span><span class="s2">&gt;2d</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="n">flow</span><span class="o">.</span><span class="n">inp_order</span><span class="si">}</span><span class="s2"> &gt;&gt; </span><span class="si">{</span><span class="n">flow</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2"> &gt;&gt; Node</span><span class="si">{</span><span class="n">flow</span><span class="o">.</span><span class="n">outp_id</span><span class="si">:</span><span class="s2">&gt;2d</span><span class="si">}</span><span class="s2">|[</span><span class="si">{</span><span class="n">flow</span><span class="o">.</span><span class="n">outp_order</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_execute_flow</span><span class="p">(</span><span class="n">flow</span><span class="p">)</span>
+                    <span class="n">unexecuted_flows_copy</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">flow</span><span class="p">)</span>
+                <span class="n">unexecuted_flows</span> <span class="o">=</span> <span class="n">unexecuted_flows_copy</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<div class="viewcode-block" id="PipeNet.plot">
+<a class="viewcode-back" href="../../../apidoc/gamut.operator.html#gamut.operator.Operator.PipeNet.plot">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertical</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot .mmd graph of current flow.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rankdir</span> <span class="o">=</span> <span class="s1">&#39;LR&#39;</span> <span class="k">if</span> <span class="n">vertical</span> <span class="k">else</span> <span class="s1">&#39;TD&#39;</span>
+        <span class="n">maingraph</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">%%</span><span class="s2">{ init: { &#39;flowchart&#39;: { &#39;curve&#39;: &#39;linear&#39; } } }</span><span class="si">%%</span><span class="s2">&quot;</span><span class="p">,</span>
+                     <span class="sa">f</span><span class="s1">&#39;graph </span><span class="si">{</span><span class="n">rankdir</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;classDef Node fill:#FBE5D5,stroke:#333,stroke-width:2px;&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;classDef Operator fill:#BDD7EE,stroke:#333,stroke-width:2px;&#39;</span><span class="p">,</span>
+                     <span class="sa">f</span><span class="s1">&#39;subgraph </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+        <span class="n">subgraphs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">nid</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">maingraph</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Node</span><span class="si">{</span><span class="n">nid</span><span class="si">}</span><span class="s2">[Node</span><span class="si">{</span><span class="n">nid</span><span class="si">}</span><span class="s2">]:::Node&quot;</span><span class="p">)</span>
+
+        <span class="n">subgraph_id</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">flow</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flows</span><span class="p">:</span>
+
+            <span class="n">inp_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">flow</span><span class="o">.</span><span class="n">inp_id</span><span class="p">]</span>
+            <span class="n">outp_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">flow</span><span class="o">.</span><span class="n">outp_id</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">flow</span><span class="o">.</span><span class="n">operator</span><span class="p">,</span> <span class="n">Pipe</span><span class="p">):</span>
+                <span class="n">flow_repr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">flow</span><span class="o">.</span><span class="n">inp_order</span><span class="si">}</span><span class="s2">&gt;&gt;</span><span class="si">{</span><span class="n">flow</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">&gt;&gt;[</span><span class="si">{</span><span class="n">flow</span><span class="o">.</span><span class="n">outp_order</span><span class="si">}</span><span class="s2">]&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">flow_repr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">flow</span><span class="o">.</span><span class="n">inp_order</span><span class="si">}</span><span class="s2">&gt;&gt;Pipe</span><span class="si">{</span><span class="n">subgraph_id</span><span class="si">}</span><span class="s2">&gt;&gt;[</span><span class="si">{</span><span class="n">flow</span><span class="o">.</span><span class="n">outp_order</span><span class="si">}</span><span class="s2">]&quot;</span>
+            
+            <span class="k">if</span> <span class="n">inp_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">outp_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">maingraph</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Node</span><span class="si">{</span><span class="n">inp_node</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> -- </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">flow_repr</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> --&gt; Node</span><span class="si">{</span><span class="n">outp_node</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Node </span><span class="si">{</span><span class="n">flow</span><span class="o">.</span><span class="n">inp_id</span><span class="si">}</span><span class="s2"> or Node </span><span class="si">{</span><span class="n">flow</span><span class="o">.</span><span class="n">outp_id</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">flow</span><span class="o">.</span><span class="n">operator</span><span class="p">,</span> <span class="n">Pipe</span><span class="p">):</span>
+                <span class="n">subgraph</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;subgraph Pipe</span><span class="si">{</span><span class="n">subgraph_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">flow</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">operators</span><span class="p">)):</span>
+                    <span class="n">subgraph</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Operator</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">[</span><span class="se">\&quot;</span><span class="si">{</span><span class="n">flow</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">operators</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">]:::Operator&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">flow</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">operators</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">subgraph</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Operator</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> --&gt; Operator</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">subgraph</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;end</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">subgraphs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subgraph</span><span class="p">)</span>
+
+        <span class="n">maingraph</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;end</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">graphlines</span> <span class="o">=</span> <span class="n">maingraph</span> <span class="o">+</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">subgraph</span> <span class="ow">in</span> <span class="n">subgraphs</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">subgraph</span><span class="p">]</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;pipenet.mmd&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fileopen</span><span class="p">:</span>
+            <span class="n">fileopen</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">graphlines</span><span class="p">))</span></div>
+</div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tsinghua University, Institute of Nuclear and New Energy Technology, THU-RSAG.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

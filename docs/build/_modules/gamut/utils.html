@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamut.utils &mdash; GAMUT 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=e259d695"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            GAMUT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dependencies.html">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../classes_and_algorithms.html">Classes and algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory/index.html">Theory Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GAMUT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gamut.utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gamut.utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
+<span class="kn">from</span> <span class="nn">re</span> <span class="kn">import</span> <span class="n">match</span>
+
+
+<div class="viewcode-block" id="gaussian">
+<a class="viewcode-back" href="../../apidoc/gamut.html#gamut.utils.gaussian">[docs]</a>
+<span class="k">def</span> <span class="nf">gaussian</span><span class="p">(</span><span class="n">indexes</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">std</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">indexes</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">std</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="padconvol">
+<a class="viewcode-back" href="../../apidoc/gamut.html#gamut.utils.padconvol">[docs]</a>
+<span class="k">def</span> <span class="nf">padconvol</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
+    <span class="n">padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="p">(</span><span class="n">kernel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">kernel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;reflect&#39;</span><span class="p">)</span>
+    <span class="n">convol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">padded</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">)[</span><span class="n">kernel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="n">kernel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">convol</span></div>
+
+
+<span class="c1"># def MBCTransformer(operator):</span>
+
+<span class="c1">#     if not issubclass(operator, Operator):</span>
+<span class="c1">#         raise TypeError(&#39;Input must be a Operator class.&#39;)</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         class MBCOperator(operator):</span>
+
+<span class="c1">#             def __init__(self, *args, **kwargs):</span>
+<span class="c1">#                 super().__init__(*args, **kwargs)</span>
+<span class="c1">#                 self._label = f&#39;-MBC[{self._label}]&#39;</span>
+
+<span class="c1">#             def __run__(self, spectrum):</span>
+<span class="c1">#                 smthed = super().__run__(spectrum)</span>
+<span class="c1">#                 ratio = Spectrum(smthed.counts / spectrum.counts)</span>
+<span class="c1">#                 smthed_ratio = super().__run__(ratio)</span>
+<span class="c1">#                 return Spectrum(smthed_ratio.counts * smthed.counts,</span>
+<span class="c1">#                                 label=self._label)</span>
+
+<span class="c1">#     return MBCOperator</span>
+
+
+<div class="viewcode-block" id="Differential">
+<a class="viewcode-back" href="../../apidoc/gamut.html#gamut.utils.Differential">[docs]</a>
+<span class="k">def</span> <span class="nf">Differential</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">half_width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">derive_order</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="c1"># &#39;&#39;&#39;</span>
+    <span class="c1"># Numerical differential peak-searching method based on Savitzy-Colay fitting method.</span>
+    <span class="c1"># Equation:</span>
+    <span class="c1">#     Ab + E = y</span>
+    <span class="c1">#     -b = [b0, b1, ..., bi,..., bn], fitted polynomial</span>
+    <span class="c1">#     -A = [[1   m     m^2    ,...,       m^n]</span>
+    <span class="c1">#           [1  m-1  (m-1)^2  ,...,   (m-1)^n]</span>
+    <span class="c1">#           [1   i     i^2    ,...,       i^n]</span>
+    <span class="c1">#           [1  -m   (-m)^2   ,...,    (-m)^n]], index for fitted polynomial</span>
+    <span class="c1">#     -y = [y(m), y(m-1),..., y(0),..., y(-m)], windowed spectrum</span>
+    <span class="c1">#     -m = half_width of transformation window</span>
+    <span class="c1">#     -n = order of fitted polynomial</span>
+    <span class="c1">#     -bi = polynomial coefficients</span>
+    <span class="c1"># Solution:</span>
+    <span class="c1">#     -b = (A.t*A).I * A.t * y</span>
+    <span class="c1">#     -y(fitted) = Ab = A * (A.t*A).I *A.t * y = A * M * y</span>
+    <span class="c1">#     -y(0)(kth derivative)(fitted)</span>
+    <span class="c1">#         = y(0)(fitted)(kth derivative)</span>
+    <span class="c1">#         = ( b0 + b1 * m + ... + bn * m^n )(kth derivative)|(m=0)</span>
+    <span class="c1">#         = k! * bk + (k+1)!/1! * b(k+1) * m + ... + n!/(n-k)! * bn * m^(n-k)|(m=0)</span>
+    <span class="c1">#         = k! * bk</span>
+    <span class="c1">#         = K! * (M * y)[kth element]</span>
+    <span class="c1">#         = k! * (M * y)[k]</span>
+    <span class="c1">#     * M = (A.t*A).I *A.t, b = M * y</span>
+
+    <span class="c1"># :param counts: spectrum counts</span>
+    <span class="c1"># :param order[2]: polymonial order of target fitted function</span>
+    <span class="c1"># :param half_width[3]: halfwidth of transform window</span>
+    <span class="c1"># :param derive_order[1]: derivative order of numerical differential</span>
+
+    <span class="c1"># :return diff: target numerical differential</span>
+    <span class="c1"># :return coefs: coefficient vector of transform</span>
+    <span class="c1"># &#39;&#39;&#39;</span>
+    <span class="n">mat_order</span><span class="p">,</span> <span class="n">mat_width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">order</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">half_width</span><span class="p">,</span> <span class="n">half_width</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">mat_width</span> <span class="o">**</span> <span class="n">mat_order</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">A</span><span class="p">)),</span> <span class="n">A</span><span class="o">.</span><span class="n">T</span> <span class="p">)</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">derive_order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">half_width</span><span class="p">,</span> <span class="n">counts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">half_width</span><span class="p">):</span>
+            <span class="n">diff</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span> <span class="n">M</span><span class="p">,</span> <span class="n">counts</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">half_width</span><span class="p">:</span> <span class="n">i</span><span class="o">+</span><span class="n">half_width</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="p">)[</span><span class="n">derive_order</span><span class="p">]</span>
+        <span class="n">coefs</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="n">derive_order</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">half_width</span><span class="p">,</span> <span class="n">counts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">half_width</span><span class="p">):</span>
+            <span class="n">diff</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span> <span class="n">M</span><span class="p">,</span> <span class="n">counts</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">half_width</span><span class="p">:</span> <span class="n">i</span><span class="o">+</span><span class="n">half_width</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="p">)[</span><span class="n">derive_order</span><span class="p">]</span> <span class="o">*</span> <span class="n">derive_order</span>
+        <span class="n">coefs</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="n">derive_order</span><span class="p">]</span> <span class="o">*</span> <span class="n">derive_order</span>
+    <span class="k">return</span> <span class="n">diff</span><span class="p">,</span> <span class="n">coefs</span></div>
+
+
+<div class="viewcode-block" id="Nuclide">
+<a class="viewcode-back" href="../../apidoc/gamut.html#gamut.utils.Nuclide">[docs]</a>
+<span class="k">class</span> <span class="nc">Nuclide</span><span class="p">():</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mass</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_symbol</span> <span class="o">=</span> <span class="n">symbol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mass</span> <span class="o">=</span> <span class="n">mass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_half_life</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_symbol</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mass</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">half_life</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_half_life</span>
+
+    <span class="nd">@half_life</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">half_life</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">half_life</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_half_life</span> <span class="o">=</span> <span class="n">half_life</span>
+
+<div class="viewcode-block" id="Nuclide.add_gamma">
+<a class="viewcode-back" href="../../apidoc/gamut.html#gamut.utils.Nuclide.add_gamma">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">branch</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_gamma_branch&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_gamma_branch</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gamma_branch</span><span class="p">[</span><span class="n">energy</span><span class="p">]</span> <span class="o">=</span> <span class="n">branch</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">gammas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">energy</span> <span class="k">for</span> <span class="n">energy</span><span class="p">,</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gamma_branch</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ratios</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">branch</span> <span class="k">for</span> <span class="n">energy</span><span class="p">,</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gamma_branch</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="energy_in_group">
+<a class="viewcode-back" href="../../apidoc/gamut.html#gamut.utils.energy_in_group">[docs]</a>
+<span class="k">def</span> <span class="nf">energy_in_group</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">energies</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">energy</span><span class="o">-</span><span class="n">energies</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">energy</span><span class="o">-</span><span class="n">energies</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<span class="c1"># def match_unit(unit):</span>
+<span class="c1">#     match unit:</span>
+<span class="c1">#         case &#39;Hrs.&#39;:</span>
+<span class="c1">#             unit = 3600</span>
+<span class="c1">#         case &#39;Min.&#39;:</span>
+<span class="c1">#             unit = 60</span>
+<span class="c1">#         case &#39;Sec.&#39;:</span>
+<span class="c1">#             unit = 1</span>
+<span class="c1">#         case &#39;Yrs.&#39;:</span>
+<span class="c1">#             unit = 3600*24*365</span>
+<span class="c1">#         case &#39;Days&#39;:</span>
+<span class="c1">#             unit = 3600*24</span>
+<span class="c1">#     return unit</span>
+
+<span class="c1"># def convert_gv_report(path):</span>
+<span class="c1">#     with open(path, &#39;r&#39;) as fileopen:</span>
+<span class="c1">#         filelines = fileopen.readlines()</span>
+<span class="c1">#     index = 0</span>
+<span class="c1">#     list_nuc = []</span>
+<span class="c1">#     while index &lt; len(filelines):</span>
+<span class="c1">#         line = filelines[index]</span>
+<span class="c1">#         subindex = 1</span>
+<span class="c1">#         if (m := match(r&quot;\s+([\w]+)-([\d]+)\s+([\d\.]+)\s+([\w\.]+)\s+([\d\.]+)\s+([-\w]+)&quot;, line)):</span>
+<span class="c1">#             nuc = Nuclide(symbol=m.group(1), mass=int(m.group(2)), half_life=float(m.group(3))*match_unit(m.group(4)))</span>
+<span class="c1">#             while (m := match(r&quot;\s+([\d.]+)keV\s+([\d.]+)%\s+([-\w]+)&quot;, filelines[index+subindex])):</span>
+<span class="c1">#                 nuc.add_gamma(energy=float(m.group(1)), branch=float(m.group(2))/100)</span>
+<span class="c1">#                 subindex += 1</span>
+<span class="c1">#             list_nuc.append(nuc)</span>
+<span class="c1">#         index += subindex</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tsinghua University, Institute of Nuclear and New Energy Technology.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

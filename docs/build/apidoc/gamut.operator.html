@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamut.operator package &mdash; GAMUT 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=e259d695"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="gamut.spectrum package" href="gamut.spectrum.html" />
+    <link rel="prev" title="gamut.classes package" href="gamut.classes.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GAMUT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dependencies.html">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../classes_and_algorithms.html">Classes and Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/index.html">User Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/index.html">Theory Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License Agreement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GAMUT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Reference</a></li>
+      <li class="breadcrumb-item active">gamut.operator package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/apidoc/gamut.operator.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gamut-operator-package">
+<h1>gamut.operator package<a class="headerlink" href="#gamut-operator-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-gamut.operator.AreaCalculator">
+<span id="gamut-operator-areacalculator-module"></span><h2>gamut.operator.AreaCalculator module<a class="headerlink" href="#module-gamut.operator.AreaCalculator" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.AreaCalculator.AverageAreaCalculator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.AreaCalculator.</span></span><span class="sig-name descname"><span class="pre">AverageAreaCalculator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/AreaCalculator.html#AverageAreaCalculator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.AreaCalculator.AverageAreaCalculator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+<p>The most basic PeakAreaCalculator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_mode</strong> – mode to strip counts of baseline.</p></li>
+<li><p><strong>label</strong> – label for the operator</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.AreaCalculator.AverageCovellPeakAreaCalculator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.AreaCalculator.</span></span><span class="sig-name descname"><span class="pre">AverageCovellPeakAreaCalculator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/AreaCalculator.html#AverageCovellPeakAreaCalculator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.AreaCalculator.AverageCovellPeakAreaCalculator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.AreaCalculator.RegionPeakFitter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.AreaCalculator.</span></span><span class="sig-name descname"><span class="pre">RegionPeakFitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equal_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_npeaks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/AreaCalculator.html#RegionPeakFitter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.AreaCalculator.RegionPeakFitter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.AreaCalculator.EntiretyPeakFitter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.AreaCalculator.</span></span><span class="sig-name descname"><span class="pre">EntiretyPeakFitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/AreaCalculator.html#EntiretyPeakFitter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.AreaCalculator.EntiretyPeakFitter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.AreaCalculator.Deconvolutioner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.AreaCalculator.</span></span><span class="sig-name descname"><span class="pre">Deconvolutioner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">otrials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/AreaCalculator.html#Deconvolutioner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.AreaCalculator.Deconvolutioner" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-gamut.operator.BasicOperator">
+<span id="gamut-operator-basicoperator-module"></span><h2>gamut.operator.BasicOperator module<a class="headerlink" href="#module-gamut.operator.BasicOperator" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.BasicOperator.Passer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.BasicOperator.</span></span><span class="sig-name descname"><span class="pre">Passer</span></span><a class="reference internal" href="../_modules/gamut/operator/BasicOperator.html#Passer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.BasicOperator.Passer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.BasicOperator.Stripper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.BasicOperator.</span></span><span class="sig-name descname"><span class="pre">Stripper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/BasicOperator.html#Stripper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.BasicOperator.Stripper" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+<p>Strip the second spectrum from first spectrum, and limit the minimum to be a certain value.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.BasicOperator.Functionor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.BasicOperator.</span></span><span class="sig-name descname"><span class="pre">Functionor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Functionor'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/BasicOperator.html#Functionor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.BasicOperator.Functionor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+<p>Wrapping Oprerator for any single-input function.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.BasicOperator.Combinor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.BasicOperator.</span></span><span class="sig-name descname"><span class="pre">Combinor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Combinor'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/BasicOperator.html#Combinor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.BasicOperator.Combinor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.BasicOperator.Convolutionor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.BasicOperator.</span></span><span class="sig-name descname"><span class="pre">Convolutionor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'same'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'full'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'valid'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'same'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Convolutionor'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/BasicOperator.html#Convolutionor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.BasicOperator.Convolutionor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.BasicOperator.Multiplier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.BasicOperator.</span></span><span class="sig-name descname"><span class="pre">Multiplier</span></span><a class="reference internal" href="../_modules/gamut/operator/BasicOperator.html#Multiplier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.BasicOperator.Multiplier" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.BasicOperator.Translator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.BasicOperator.</span></span><span class="sig-name descname"><span class="pre">Translator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/BasicOperator.html#Translator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.BasicOperator.Translator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-gamut.operator.Operator">
+<span id="gamut-operator-operator-module"></span><h2>gamut.operator.Operator module<a class="headerlink" href="#module-gamut.operator.Operator" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.Operator.Operator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.Operator.</span></span><span class="sig-name descname"><span class="pre">Operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/Operator.html#Operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.Operator.Operator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Operator is the basic class in GAMUT to wrap all spectrum analysis algorithms.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.operator.Operator.Operator.inp_num">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">inp_num</span></span><a class="headerlink" href="#gamut.operator.Operator.Operator.inp_num" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.operator.Operator.Operator.label">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#gamut.operator.Operator.Operator.label" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.Operator.Pipe">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.Operator.</span></span><span class="sig-name descname"><span class="pre">Pipe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operators</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><span class="pre">Operator</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/Operator.html#Pipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.Operator.Pipe" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.operator.Operator.Pipe.operators">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">operators</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><span class="pre">Operator</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gamut.operator.Operator.Pipe.operators" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.operator.Operator.Pipe.spectra">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">spectra</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="gamut.spectrum.html#gamut.spectrum.Spectrum.Spectrum" title="gamut.spectrum.Spectrum.Spectrum"><span class="pre">Spectrum</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gamut.operator.Operator.Pipe.spectra" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.operator.Operator.Pipe.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operator</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/Operator.html#Pipe.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.Operator.Pipe.append" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.operator.Operator.Pipe.list_spectrum">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_spectrum</span></span><a class="headerlink" href="#gamut.operator.Operator.Pipe.list_spectrum" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.operator.Operator.Pipe.get_spectrum">
+<span class="sig-name descname"><span class="pre">get_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/Operator.html#Pipe.get_spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.Operator.Pipe.get_spectrum" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.Operator.Node">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.Operator.</span></span><span class="sig-name descname"><span class="pre">Node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="gamut.spectrum.html#gamut.spectrum.Spectrum.Spectrum" title="gamut.spectrum.Spectrum.Spectrum"><span class="pre">Spectrum</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/Operator.html#Node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.Operator.Node" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.Operator.Flow">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.Operator.</span></span><span class="sig-name descname"><span class="pre">Flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><span class="pre">Operator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><span class="pre">Operator</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#gamut.operator.Operator.Pipe" title="gamut.operator.Operator.Pipe"><span class="pre">Pipe</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">inp_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inp_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outp_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outp_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/Operator.html#Flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.Operator.Flow" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.Operator.PipeNet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.Operator.</span></span><span class="sig-name descname"><span class="pre">PipeNet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamut.operator.Operator.Flow" title="gamut.operator.Operator.Flow"><span class="pre">Flow</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/Operator.html#PipeNet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.Operator.PipeNet" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.operator.Operator.PipeNet.label">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#gamut.operator.Operator.PipeNet.label" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamut.operator.Operator.PipeNet.nodes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#gamut.operator.Operator.Node" title="gamut.operator.Operator.Node"><span class="pre">Node</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gamut.operator.Operator.PipeNet.nodes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.operator.Operator.PipeNet.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertical</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/Operator.html#PipeNet.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.Operator.PipeNet.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot .mmd graph of current flow.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamut.operator.OtherOperator">
+<span id="gamut-operator-otheroperator-module"></span><h2>gamut.operator.OtherOperator module<a class="headerlink" href="#module-gamut.operator.OtherOperator" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.OtherOperator.SNIPStripper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.OtherOperator.</span></span><span class="sig-name descname"><span class="pre">SNIPStripper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/OtherOperator.html#SNIPStripper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.OtherOperator.SNIPStripper" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+<p>”
+Classic reverse SNIP baseline stripping algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>order</strong> – time to repeat boardening operation</p></li>
+<li><p><strong>label</strong> – label for the operator</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.OtherOperator.AdaptiveSNIPStripper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.OtherOperator.</span></span><span class="sig-name descname"><span class="pre">AdaptiveSNIPStripper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">baseline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/OtherOperator.html#AdaptiveSNIPStripper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.OtherOperator.AdaptiveSNIPStripper" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+<p>”
+Classic reverse SNIP baseline stripping algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>order</strong> – time to repeat boardening operation</p></li>
+<li><p><strong>label</strong> – label for the operator</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.OtherOperator.WhittakerSmoother">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.OtherOperator.</span></span><span class="sig-name descname"><span class="pre">WhittakerSmoother</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_weight_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/OtherOperator.html#WhittakerSmoother"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.OtherOperator.WhittakerSmoother" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+<p>Whittaker smoother.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>order</strong> – time to repeat boardening operation</p></li>
+<li><p><strong>label</strong> – label for the operator</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.OtherOperator.IterativeAsymmetricWhittakerStripper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.OtherOperator.</span></span><span class="sig-name descname"><span class="pre">IterativeAsymmetricWhittakerStripper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smooth_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/OtherOperator.html#IterativeAsymmetricWhittakerStripper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.OtherOperator.IterativeAsymmetricWhittakerStripper" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.OtherOperator.WhittakerSmoother" title="gamut.operator.OtherOperator.WhittakerSmoother"><code class="xref py py-class docutils literal notranslate"><span class="pre">WhittakerSmoother</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>order</strong> – time to repeat boardening operation</p></li>
+<li><p><strong>label</strong> – label for the operator</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.OtherOperator.FWHMCalibrator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.OtherOperator.</span></span><span class="sig-name descname"><span class="pre">FWHMCalibrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/OtherOperator.html#FWHMCalibrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.OtherOperator.FWHMCalibrator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-gamut.operator.PeakSearcher">
+<span id="gamut-operator-peaksearcher-module"></span><h2>gamut.operator.PeakSearcher module<a class="headerlink" href="#module-gamut.operator.PeakSearcher" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.PeakSearcher.PeakSearcher">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.PeakSearcher.</span></span><span class="sig-name descname"><span class="pre">PeakSearcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_height_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_area</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_area_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">merge_peaks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">merge_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'No'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'Old'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'New'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_deprecate_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">note_deprecate_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/PeakSearcher.html#PeakSearcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.PeakSearcher.PeakSearcher" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamut.operator.PeakSearcher.PeakSearcher.generic_filter">
+<span class="sig-name descname"><span class="pre">generic_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/PeakSearcher.html#PeakSearcher.generic_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.PeakSearcher.PeakSearcher.generic_filter" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.PeakSearcher.GaussPeakSearcher">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.PeakSearcher.</span></span><span class="sig-name descname"><span class="pre">GaussPeakSearcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/PeakSearcher.html#GaussPeakSearcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.PeakSearcher.GaussPeakSearcher" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.PeakSearcher.PeakSearcher" title="gamut.operator.PeakSearcher.PeakSearcher"><code class="xref py py-class docutils literal notranslate"><span class="pre">PeakSearcher</span></code></a></p>
+<p>if even o, o = o/2, g(i) = c(i+o) * c(i-o) / c(i+o+2) / c(i-o-2)
+if odd o, o = (o-1)/2 g(i) = c(i+o+1) * c(i-o) / c(i+o+3) / c(i-o-2)</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.PeakSearcher.DifferentialPeakSearcher">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.PeakSearcher.</span></span><span class="sig-name descname"><span class="pre">DifferentialPeakSearcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">poly_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hwidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">derive_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/PeakSearcher.html#DifferentialPeakSearcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.PeakSearcher.DifferentialPeakSearcher" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.PeakSearcher.PeakSearcher" title="gamut.operator.PeakSearcher.PeakSearcher"><code class="xref py py-class docutils literal notranslate"><span class="pre">PeakSearcher</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.PeakSearcher.CovarianceSearcher">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.PeakSearcher.</span></span><span class="sig-name descname"><span class="pre">CovarianceSearcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hwidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FWHM</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'uniform'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'inverse'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'normal'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'inverse'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/PeakSearcher.html#CovarianceSearcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.PeakSearcher.CovarianceSearcher" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.PeakSearcher.PeakSearcher" title="gamut.operator.PeakSearcher.PeakSearcher"><code class="xref py py-class docutils literal notranslate"><span class="pre">PeakSearcher</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.PeakSearcher.SymmetricZeroAreaConvolutionSearcher">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.PeakSearcher.</span></span><span class="sig-name descname"><span class="pre">SymmetricZeroAreaConvolutionSearcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hwidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FWHM</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'gaussian'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'gaussian'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/PeakSearcher.html#SymmetricZeroAreaConvolutionSearcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.PeakSearcher.SymmetricZeroAreaConvolutionSearcher" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.PeakSearcher.PeakSearcher" title="gamut.operator.PeakSearcher.PeakSearcher"><code class="xref py py-class docutils literal notranslate"><span class="pre">PeakSearcher</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.PeakSearcher.SecondConvolutionPeakSearcher">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.PeakSearcher.</span></span><span class="sig-name descname"><span class="pre">SecondConvolutionPeakSearcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hwdith</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/PeakSearcher.html#SecondConvolutionPeakSearcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.PeakSearcher.SecondConvolutionPeakSearcher" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.PeakSearcher.PeakSearcher" title="gamut.operator.PeakSearcher.PeakSearcher"><code class="xref py py-class docutils literal notranslate"><span class="pre">PeakSearcher</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-gamut.operator.Smoother">
+<span id="gamut-operator-smoother-module"></span><h2>gamut.operator.Smoother module<a class="headerlink" href="#module-gamut.operator.Smoother" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.Smoother.CentroidSmoother">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.Smoother.</span></span><span class="sig-name descname"><span class="pre">CentroidSmoother</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/Smoother.html#CentroidSmoother"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.Smoother.CentroidSmoother" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+<p>The most basic smoother.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>order</strong> – smoothing order, also the half-width of smoothing window</p>
+</dd>
+<dt class="field-even">Label<span class="colon">:</span></dt>
+<dd class="field-even"><p>label for the operator</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.Smoother.SavitzkySmoother">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.Smoother.</span></span><span class="sig-name descname"><span class="pre">SavitzkySmoother</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hwidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/Smoother.html#SavitzkySmoother"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.Smoother.SavitzkySmoother" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+<p>The most widely used smoother, applied in commercial codes, such as GammaVision &amp; Genie2000
+Reference:</p>
+<blockquote>
+<div><p>A. Savitzky and M. J. E. Golay, “Smoothing and Differentiation
+of Data by Simplified Least Squares Procedures.” Anal. Chem.,
+vol. 36, no. 8, pp. 1627–1639, Jul. 1964. [Online]. Available:
+<a class="reference external" href="http://dx.doi.org/10.1021/ac60214a047">http://dx.doi.org/10.1021/ac60214a047</a></p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>order</strong> – order of fitted polynomial</p></li>
+<li><p><strong>hwidth</strong> – half width of smoothing window</p></li>
+<li><p><strong>label</strong> – label for the operator</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.Smoother.FourierSmoother">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.Smoother.</span></span><span class="sig-name descname"><span class="pre">FourierSmoother</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'low'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'high'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'gauss'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'low'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/Smoother.html#FourierSmoother"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.Smoother.FourierSmoother" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+<p>Smoother based on Fourier Transformation.
+Reference:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>order</strong> – order of fitted polynomial</p></li>
+<li><p><strong>hwidth</strong> – half width of smoothing window</p></li>
+<li><p><strong>label</strong> – label for the operator</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.Smoother.WaveletSmoother">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.Smoother.</span></span><span class="sig-name descname"><span class="pre">WaveletSmoother</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'harr'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'db1'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'sym1'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'coif1'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'gaus1'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sym3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'hard'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'soft'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'quadratic-soft'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'quadratic-soft'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'visushrink'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'sqtwolog'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'minimax'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'visushrink'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/Smoother.html#WaveletSmoother"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.Smoother.WaveletSmoother" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.Smoother.TranslationInvarianceWaveletSmoother">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.Smoother.</span></span><span class="sig-name descname"><span class="pre">TranslationInvarianceWaveletSmoother</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'harr'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'db2'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'sym3'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'gaus1'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'dmey'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sym3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'hard'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'soft'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'quadratic-soft'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'quadratic-soft'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'visushrink'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'sqtwolog'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'minimax'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'visushrink'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/Smoother.html#TranslationInvarianceWaveletSmoother"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.Smoother.TranslationInvarianceWaveletSmoother" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Smoother.WaveletSmoother" title="gamut.operator.Smoother.WaveletSmoother"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaveletSmoother</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-gamut.operator.beta">
+<span id="gamut-operator-beta-module"></span><h2>gamut.operator.beta module<a class="headerlink" href="#module-gamut.operator.beta" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamut.operator.beta.GenericPeakFitter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamut.operator.beta.</span></span><span class="sig-name descname"><span class="pre">GenericPeakFitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">guessfunc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapefunc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renderfunc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/beta.html#GenericPeakFitter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.beta.GenericPeakFitter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gamut.operator.Operator.Operator" title="gamut.operator.Operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamut.operator.beta.tailedgaussian">
+<span class="sig-prename descclassname"><span class="pre">gamut.operator.beta.</span></span><span class="sig-name descname"><span class="pre">tailedgaussian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/beta.html#tailedgaussian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.beta.tailedgaussian" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamut.operator.beta.gaussian">
+<span class="sig-prename descclassname"><span class="pre">gamut.operator.beta.</span></span><span class="sig-name descname"><span class="pre">gaussian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/beta.html#gaussian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.beta.gaussian" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamut.operator.beta.lorentzian">
+<span class="sig-prename descclassname"><span class="pre">gamut.operator.beta.</span></span><span class="sig-name descname"><span class="pre">lorentzian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/beta.html#lorentzian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.beta.lorentzian" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamut.operator.beta.linear">
+<span class="sig-prename descclassname"><span class="pre">gamut.operator.beta.</span></span><span class="sig-name descname"><span class="pre">linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/beta.html#linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.beta.linear" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamut.operator.beta.shape_repeater">
+<span class="sig-prename descclassname"><span class="pre">gamut.operator.beta.</span></span><span class="sig-name descname"><span class="pre">shape_repeater</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nshapes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/beta.html#shape_repeater"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.beta.shape_repeater" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamut.operator.beta.shape_shared_repeater">
+<span class="sig-prename descclassname"><span class="pre">gamut.operator.beta.</span></span><span class="sig-name descname"><span class="pre">shape_shared_repeater</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nshapes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_param_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/beta.html#shape_shared_repeater"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.beta.shape_shared_repeater" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamut.operator.beta.shape_adder">
+<span class="sig-prename descclassname"><span class="pre">gamut.operator.beta.</span></span><span class="sig-name descname"><span class="pre">shape_adder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newfunc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gamut/operator/beta.html#shape_adder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gamut.operator.beta.shape_adder" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-gamut.operator">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-gamut.operator" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gamut.classes.html" class="btn btn-neutral float-left" title="gamut.classes package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gamut.spectrum.html" class="btn btn-neutral float-right" title="gamut.spectrum package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tsinghua University, Institute of Nuclear and New Energy Technology, THU-RSAG.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

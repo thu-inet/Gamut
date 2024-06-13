@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamut.operator.OtherOperator &mdash; GAMUT 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=e259d695"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GAMUT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dependencies.html">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../classes_and_algorithms.html">Classes and Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/index.html">User Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/index.html">Theory Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidoc/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License Agreement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GAMUT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gamut.operator.OtherOperator</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gamut.operator.OtherOperator</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..spectrum.Spectrum</span> <span class="kn">import</span> <span class="n">Spectrum</span>
+<span class="kn">from</span> <span class="nn">.Operator</span> <span class="kn">import</span> <span class="n">Operator</span>
+<span class="kn">from</span> <span class="nn">..classes</span> <span class="kn">import</span> <span class="n">Calibration</span>
+
+<div class="viewcode-block" id="SNIPStripper">
+<a class="viewcode-back" href="../../../apidoc/gamut.operator.html#gamut.operator.OtherOperator.SNIPStripper">[docs]</a>
+<span class="k">class</span> <span class="nc">SNIPStripper</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;</span>
+<span class="sd">    Classic reverse SNIP baseline stripping algorithm.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">baseline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param order: time to repeat boardening operation</span>
+<span class="sd">        :param label: label for the operator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_order</span> <span class="o">=</span> <span class="n">order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_baseline</span> <span class="o">=</span> <span class="n">baseline</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;SNIPStripper[O</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_order</span><span class="si">}</span><span class="s2">]&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__run__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectra</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Spectrum</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
+        <span class="n">stripped</span> <span class="o">=</span> <span class="n">spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">logloged</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="n">spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">logloged</span><span class="p">,</span> <span class="n">pad_width</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_order</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;edge&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_order</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">boardened</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">padded</span><span class="p">,</span> <span class="n">pad_width</span><span class="o">=</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;edge&#39;</span><span class="p">)[:</span> <span class="o">-</span><span class="n">p</span><span class="p">]</span> <span class="o">+</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">padded</span><span class="p">,</span> <span class="n">pad_width</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">p</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;edge&#39;</span><span class="p">)[</span><span class="n">p</span><span class="p">:]</span>
+            <span class="n">padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">padded</span><span class="p">,</span> <span class="n">boardened</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">sliced</span> <span class="o">=</span> <span class="n">padded</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_order</span><span class="o">*</span><span class="mi">2</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">padded</span><span class="p">)</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_order</span><span class="o">*</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">recovered</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">sliced</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">stripped</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">recovered</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_baseline</span><span class="p">:</span>
+            <span class="n">stripped</span> <span class="o">=</span> <span class="p">(</span><span class="n">spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">stripped</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">Spectrum</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stripped</span></div>
+
+
+
+<div class="viewcode-block" id="AdaptiveSNIPStripper">
+<a class="viewcode-back" href="../../../apidoc/gamut.operator.html#gamut.operator.OtherOperator.AdaptiveSNIPStripper">[docs]</a>
+<span class="k">class</span> <span class="nc">AdaptiveSNIPStripper</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;</span>
+<span class="sd">    Classic reverse SNIP baseline stripping algorithm.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">baseline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">high_order</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param order: time to repeat boardening operation</span>
+<span class="sd">        :param label: label for the operator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_baseline</span> <span class="o">=</span> <span class="n">baseline</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_high_order</span> <span class="o">=</span> <span class="n">high_order</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;AdaptiveSNIPStripper&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__run__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectra</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Spectrum</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
+        <span class="n">stripped</span> <span class="o">=</span> <span class="n">spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">logloged</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="n">spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">region</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stripped</span><span class="o">.</span><span class="n">regions</span><span class="p">):</span>
+            <span class="n">stderrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">peak</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">peak</span> <span class="ow">in</span> <span class="n">region</span><span class="o">.</span><span class="n">peaks</span> <span class="k">if</span> <span class="s1">&#39;stderr&#39;</span> <span class="ow">in</span> <span class="n">peak</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+
+            <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+            <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">stderrs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">stderrs</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">peak</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">peak</span> <span class="ow">in</span> <span class="n">stripped</span><span class="o">.</span><span class="n">regions</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">peaks</span> <span class="k">if</span> <span class="s1">&#39;stderr&#39;</span> <span class="ow">in</span> <span class="n">peak</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+                    <span class="n">j</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">stripped</span><span class="o">.</span><span class="n">regions</span><span class="p">):</span>
+                    <span class="n">stderrs</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">peak</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">peak</span> <span class="ow">in</span> <span class="n">stripped</span><span class="o">.</span><span class="n">regions</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">peaks</span> <span class="k">if</span> <span class="s1">&#39;stderr&#39;</span> <span class="ow">in</span> <span class="n">peak</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+                    <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">j</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">k</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stripped</span><span class="o">.</span><span class="n">regions</span><span class="p">)):</span>
+                    <span class="k">break</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stderrs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_high_order</span><span class="p">:</span>
+                    <span class="n">order</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="nb">sum</span><span class="p">(</span><span class="n">stderrs</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">stderrs</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">order</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="nb">sum</span><span class="p">(</span><span class="n">stderrs</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">stderrs</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No peak with stderr info found in the spectrum&quot;</span><span class="p">)</span>
+
+            <span class="n">left</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">region</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">stripped</span><span class="o">.</span><span class="n">length</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">region</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+            <span class="n">val_left</span> <span class="o">=</span> <span class="n">logloged</span><span class="p">[</span><span class="n">region</span><span class="o">.</span><span class="n">left</span><span class="o">-</span><span class="n">left</span><span class="p">:</span> <span class="n">region</span><span class="o">.</span><span class="n">left</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">val_right</span> <span class="o">=</span> <span class="n">logloged</span><span class="p">[</span><span class="n">region</span><span class="o">.</span><span class="n">right</span><span class="p">:</span> <span class="n">region</span><span class="o">.</span><span class="n">right</span><span class="o">+</span><span class="n">right</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">logloged_region</span> <span class="o">=</span> <span class="n">logloged</span><span class="p">[</span><span class="n">region</span><span class="o">.</span><span class="n">left</span><span class="o">-</span><span class="n">left</span><span class="p">:</span> <span class="n">region</span><span class="o">.</span><span class="n">right</span><span class="o">+</span><span class="n">right</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">padded_region</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">logloged_region</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span>
+                                <span class="n">constant_values</span><span class="o">=</span><span class="p">(</span><span class="n">val_left</span><span class="p">,</span> <span class="n">val_right</span><span class="p">),</span>
+                                <span class="n">pad_width</span><span class="o">=</span><span class="p">(</span><span class="n">order</span><span class="o">-</span><span class="n">left</span><span class="p">,</span> <span class="n">order</span><span class="o">-</span><span class="n">right</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_high_order</span><span class="p">:</span>
+                    <span class="n">boardened</span> <span class="o">=</span> <span class="n">padded_region</span><span class="p">[</span><span class="n">order</span><span class="o">-</span><span class="n">p</span><span class="p">:</span> <span class="o">-</span><span class="n">order</span><span class="o">-</span><span class="n">p</span><span class="p">]</span> <span class="o">+</span> <span class="n">padded_region</span><span class="p">[</span><span class="n">order</span><span class="o">+</span><span class="n">p</span><span class="p">:</span> <span class="o">-</span><span class="n">order</span><span class="o">+</span><span class="n">p</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">padded_region</span><span class="p">)]</span>
+                    <span class="n">padded_region</span><span class="p">[</span><span class="n">order</span><span class="p">:</span> <span class="o">-</span><span class="n">order</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">padded_region</span><span class="p">[</span><span class="n">order</span><span class="p">:</span> <span class="o">-</span><span class="n">order</span><span class="p">],</span> <span class="n">boardened</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">p2</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">p</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+                    <span class="n">boardened</span> <span class="o">=</span> <span class="n">padded_region</span><span class="p">[</span><span class="n">order</span><span class="o">-</span><span class="n">p</span><span class="p">:</span> <span class="o">-</span><span class="n">order</span><span class="o">-</span><span class="n">p</span><span class="p">]</span> <span class="o">+</span> <span class="n">padded_region</span><span class="p">[</span><span class="n">order</span><span class="o">+</span><span class="n">p</span><span class="p">:</span> <span class="o">-</span><span class="n">order</span><span class="o">+</span><span class="n">p</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">padded_region</span><span class="p">)]</span>
+                    <span class="n">boardened2</span> <span class="o">=</span> <span class="n">padded_region</span><span class="p">[</span><span class="n">order</span><span class="o">-</span><span class="n">p</span><span class="p">:</span> <span class="o">-</span><span class="n">order</span><span class="o">-</span><span class="n">p</span><span class="p">]</span> <span class="o">+</span> <span class="n">padded_region</span><span class="p">[</span><span class="n">order</span><span class="o">+</span><span class="n">p</span><span class="p">:</span> <span class="o">-</span><span class="n">order</span><span class="o">+</span><span class="n">p</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">padded_region</span><span class="p">)]</span> \
+                        <span class="o">+</span> <span class="n">padded_region</span><span class="p">[</span><span class="n">order</span><span class="o">-</span><span class="n">p2</span><span class="p">:</span> <span class="o">-</span><span class="n">order</span><span class="o">-</span><span class="n">p2</span><span class="p">]</span> <span class="o">+</span> <span class="n">padded_region</span><span class="p">[</span><span class="n">order</span><span class="o">+</span><span class="n">p2</span><span class="p">:</span> <span class="o">-</span><span class="n">order</span><span class="o">+</span><span class="n">p2</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">padded_region</span><span class="p">)]</span>
+                    <span class="n">padded_region</span><span class="p">[</span><span class="n">order</span><span class="p">:</span> <span class="o">-</span><span class="n">order</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">padded_region</span><span class="p">[</span><span class="n">order</span><span class="p">:</span> <span class="o">-</span><span class="n">order</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">boardened</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">boardened2</span><span class="o">/</span><span class="mi">4</span><span class="p">))</span>
+
+            <span class="n">logloged</span><span class="p">[</span><span class="n">region</span><span class="o">.</span><span class="n">indexes</span><span class="p">]</span> <span class="o">=</span> <span class="n">padded_region</span><span class="p">[</span><span class="n">order</span><span class="p">:</span> <span class="o">-</span><span class="n">order</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">recovered</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">logloged</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">stripped</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">recovered</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_baseline</span><span class="p">:</span>
+            <span class="n">stripped</span> <span class="o">=</span> <span class="n">spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">stripped</span>
+        <span class="k">return</span> <span class="n">stripped</span></div>
+
+
+
+<div class="viewcode-block" id="WhittakerSmoother">
+<a class="viewcode-back" href="../../../apidoc/gamut.operator.html#gamut.operator.OtherOperator.WhittakerSmoother">[docs]</a>
+<span class="k">class</span> <span class="nc">WhittakerSmoother</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Whittaker smoother.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit_weight_mode</span><span class="p">,</span> <span class="n">smooth_weight</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param order: time to repeat boardening operation</span>
+<span class="sd">        :param label: label for the operator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_weight_mdoe</span> <span class="o">=</span> <span class="n">fit_weight_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_smooth_weight</span> <span class="o">=</span> <span class="n">smooth_weight</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;WhittakerSmooth&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__run__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectra</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Spectrum</span><span class="p">],</span> <span class="n">fit_weight</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
+        <span class="n">smoothed</span> <span class="o">=</span> <span class="n">spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_weight_mdoe</span> <span class="o">==</span> <span class="s2">&quot;constant&quot;</span><span class="p">:</span>
+            <span class="n">mat_fit_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">smoothed</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_weight_mdoe</span> <span class="o">==</span> <span class="s2">&quot;inverse-weighted&quot;</span><span class="p">:</span>
+            <span class="n">mat_fit_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">smoothed</span><span class="p">)</span>
+            <span class="n">mat_fit_weight</span> <span class="o">/=</span> <span class="n">mat_fit_weight</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_weight_mdoe</span> <span class="o">==</span> <span class="s2">&quot;self_defined&quot;</span> <span class="ow">and</span> <span class="n">fit_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mat_fit_weight</span> <span class="o">=</span> <span class="n">fit_weight</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown fit weight mode&quot;</span><span class="p">)</span>
+        <span class="n">mat_2nd_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">smoothed</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">smoothed</span><span class="o">.</span><span class="n">length</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> \
+            <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">smoothed</span><span class="o">.</span><span class="n">length</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">k</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">mat_2nd_diff</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">mat_2nd_diff</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">smoothed</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">mat_fit_weight</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_smooth_weight</span> <span class="o">*</span> <span class="n">mat_2nd_diff</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">mat_2nd_diff</span><span class="p">,</span> <span class="n">mat_fit_weight</span> <span class="o">@</span> <span class="n">smoothed</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">smoothed</span></div>
+
+
+
+<div class="viewcode-block" id="IterativeAsymmetricWhittakerStripper">
+<a class="viewcode-back" href="../../../apidoc/gamut.operator.html#gamut.operator.OtherOperator.IterativeAsymmetricWhittakerStripper">[docs]</a>
+<span class="k">class</span> <span class="nc">IterativeAsymmetricWhittakerStripper</span><span class="p">(</span><span class="n">WhittakerSmoother</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smooth_weight</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1E3</span><span class="p">,</span> <span class="n">times</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_times</span> <span class="o">=</span> <span class="n">times</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;IterativeNonEquilibriumWhittakerStripper&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;self_defined&#39;</span><span class="p">,</span> <span class="n">smooth_weight</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__run__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectra</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Spectrum</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
+        <span class="n">fit_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">striped</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__run__</span><span class="p">(</span><span class="n">spectra</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">fit_weight</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_times</span><span class="p">):</span>
+            <span class="n">fit_weight</span><span class="p">[</span><span class="n">striped</span> <span class="o">&lt;=</span> <span class="n">spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">1E-2</span>
+            <span class="n">fit_weight</span><span class="p">[</span><span class="n">striped</span> <span class="o">&gt;</span> <span class="n">spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">1E-2</span>
+            <span class="n">fit_weight</span><span class="p">[</span><span class="n">striped</span> <span class="o">&gt;</span> <span class="n">spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mf">0.5</span><span class="o">*</span><span class="n">spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mf">0.5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">striped</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__run__</span><span class="p">(</span><span class="n">spectra</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">fit_weight</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">striped</span></div>
+
+
+
+<div class="viewcode-block" id="FWHMCalibrator">
+<a class="viewcode-back" href="../../../apidoc/gamut.operator.html#gamut.operator.OtherOperator.FWHMCalibrator">[docs]</a>
+<span class="k">class</span> <span class="nc">FWHMCalibrator</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;FWHMCalibrator&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__run__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectra</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Spectrum</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
+        <span class="n">cal_index</span><span class="p">,</span> <span class="n">cal_FWHM</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="n">calibrated</span> <span class="o">=</span> <span class="n">spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">calibrated</span><span class="o">.</span><span class="n">regions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">calibrated</span><span class="o">.</span><span class="n">estimate_fitness</span><span class="p">(</span><span class="n">region</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mf">0.9</span><span class="p">:</span>
+                <span class="n">cal_index</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">peak</span><span class="p">[</span><span class="s1">&#39;center&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">peak</span> <span class="ow">in</span> <span class="n">region</span><span class="o">.</span><span class="n">peaks</span><span class="p">])</span>
+                <span class="n">cal_FWHM</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">peak</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">]</span><span class="o">*</span><span class="mf">2.355</span> <span class="k">for</span> <span class="n">peak</span> <span class="ow">in</span> <span class="n">region</span><span class="o">.</span><span class="n">peaks</span><span class="p">])</span>
+        <span class="n">calibrated</span><span class="o">.</span><span class="n">FWHMcal</span> <span class="o">=</span> <span class="n">Calibration</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;FWHMcal&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">cal_index</span><span class="p">,</span> <span class="n">cal_FWHM</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">calibrated</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tsinghua University, Institute of Nuclear and New Energy Technology, THU-RSAG.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
