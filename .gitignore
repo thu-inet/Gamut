@@ -2,6 +2,7 @@ __pycache__/
 .vscode/
 .ipynb_checkpoints/
 
+dist/
 older_files/
 spectrum_analysis/
 
@@ -13,5 +14,6 @@ gamspec/__pycache__/
 *.mmd
 *.Spe
 *.ipynb
+*.test.py
 
 
